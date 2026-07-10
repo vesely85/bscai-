@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Service Delivery in Motion — BSCAI Session 5</title>
+<style>
+  :root{
+    --teal:#17A2A0;
+    --teal-deep:#0E7C7A;
+    --teal-ink:#0B5E5C;
+    --navy:#123863;
+    --navy-deep:#0C2A4C;
+    --orange:#EA7A2A;
+    --orange-deep:#D2631A;
+    --ink:#14202B;
+    --ink-mid:#3E4C59;
+    --ink-soft:#5B6b78;
+    --paper:#F1F2F2;
+    --paper-soft:#E9F4F3;
+    --white:#FFFFFF;
+    --line:#E3E6E8;
+    --font-head:"Arial Black","Helvetica Neue",Helvetica,Arial,sans-serif;
+    --font-body:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;width:100%;overflow:hidden;background:#06201f;font-family:var(--font-body);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  body{touch-action:none;cursor:default}
+
+  /* ===== Camera / stage ===== */
+  #viewport{position:fixed;inset:0;overflow:hidden;background:
+     radial-gradient(120% 120% at 50% 20%, #0d3b39 0%, #082523 55%, #041413 100%);}
+  #world{position:absolute;top:0;left:0;transform-origin:0 0;will-change:transform}
+
+  /* ===== Slide shell ===== */
+  .slide{
+    position:absolute;top:0;left:0;width:1280px;height:720px;
+    transform-origin:50% 50%;
+    background:var(--white);
+    border-radius:10px;
+    overflow:hidden;
+    box-shadow:0 40px 120px rgba(0,0,0,.45), 0 8px 30px rgba(0,0,0,.35);
+    color:var(--ink);
+    backface-visibility:hidden;
+  }
+  .slide .pad{position:absolute;inset:0;padding:64px 70px}
+
+  /* Reveal animation */
+  .rv{opacity:0;transform:translateY(18px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1);transition-delay:calc(var(--d,0)*1ms)}
+  .rvs{opacity:0;transform:scale(.82);transition:opacity .7s cubic-bezier(.2,.8,.2,1),transform .7s cubic-bezier(.2,.8,.2,1);transition-delay:calc(var(--d,0)*1ms)}
+  .slide.is-active .rv{opacity:1;transform:translateY(0)}
+  .slide.is-active .rvs{opacity:1;transform:scale(1)}
+
+  /* Headline system */
+  .h-black{font-family:var(--font-head);font-weight:900;letter-spacing:-.5px;line-height:1.02;color:var(--ink)}
+  .kicker{font-family:var(--font-body);font-weight:800;letter-spacing:1.4px;text-transform:uppercase;font-size:16px}
+  .body{font-size:22px;line-height:1.48;color:var(--ink-mid)}
+
+  /* ===== BSCAI logo mark ===== */
+  .mark{display:inline-flex;align-items:center;gap:12px}
+  .mark svg{display:block}
+  .mark .wm{font-family:var(--font-head);font-weight:900;letter-spacing:-1px;color:var(--ink)}
+  .mark .wm.wht{color:#fff}
+
+  /* ===== Footer bar (content slides) ===== */
+  .footer{position:absolute;left:0;right:0;bottom:0;height:60px;background:var(--teal);display:flex;align-items:center}
+  .footer .corner{position:absolute;right:0;bottom:0;width:0;height:0;border-style:solid;border-width:0 0 60px 150px;border-color:transparent transparent var(--orange) transparent}
+  .footer .fmark{display:flex;align-items:center;gap:9px;padding-left:26px}
+  .footer .tag{margin-left:26px;color:#e9fbfa;font-weight:600;letter-spacing:3px;font-size:15px;text-transform:uppercase}
+  .footer .tag b{color:#fff;font-weight:900}
+  .footer .pg{position:absolute;right:20px;bottom:19px;color:rgba(255,255,255,.85);font-size:14px;font-weight:700;z-index:2}
+
+  /* corner triangle for non-footer slides (title/pillars) */
+  .oc{position:absolute;right:0;bottom:0;width:0;height:0;border-style:solid;border-width:0 0 118px 200px;border-color:transparent transparent var(--orange) transparent}
+
+  /* ===== Slide 1 — Cover ===== */
+  .cover{background:var(--teal)}
+  .cover .swirlwrap{position:absolute;inset:0;overflow:hidden}
+  .cover .swirl{position:absolute;left:50%;top:78%;width:1100px;height:1100px;transform:translate(-50%,-50%);opacity:.5}
+  .cover .swirl .ring{position:absolute;inset:0;border-radius:50%;border:2px solid rgba(255,255,255,.18)}
+  .cover .whitecut{position:absolute;top:0;right:0;width:0;height:0;border-style:solid;border-width:0 0 340px 560px;border-color:transparent transparent #fff transparent;transform:scaleX(1)}
+  .cover .whitecut2{position:absolute;top:0;right:0;width:520px;height:300px;background:#fff;clip-path:polygon(100% 0,100% 100%,0 0)}
+  .cover .logo-tr{position:absolute;top:44px;right:52px;text-align:right;z-index:4}
+  .cover h1{position:absolute;left:70px;top:200px;width:760px;color:#fff;font-family:var(--font-head);font-weight:900;font-size:56px;line-height:1.05;letter-spacing:-1px;z-index:3}
+  .cover .subttl{position:absolute;left:0;right:0;bottom:70px;text-align:center;color:#eafffe;font-style:italic;font-weight:700;font-size:22px;letter-spacing:.3px;z-index:3}
+
+  /* ===== Slide 2 — Question ===== */
+  .quote{background:linear-gradient(160deg,var(--teal) 0%,var(--teal-deep) 100%);color:#fff}
+  .quote .qmark{position:absolute;left:52px;top:24px;font-family:var(--font-head);font-size:280px;line-height:1;color:rgba(255,255,255,.14);font-weight:900}
+  .quote h2{position:absolute;left:90px;right:90px;top:220px;font-family:var(--font-head);font-weight:900;font-size:62px;line-height:1.08;letter-spacing:-1px}
+  .quote p{position:absolute;left:92px;right:120px;top:470px;font-size:26px;line-height:1.5;color:#dffcfb;font-weight:500}
+
+  /* ===== Section title / content headings ===== */
+  .title-lg{font-family:var(--font-head);font-weight:900;font-size:56px;letter-spacing:-1px;color:var(--ink)}
+
+  /* three column cards (slide 3) */
+  .cols3{position:absolute;left:70px;right:70px;top:170px;bottom:96px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:26px}
+  .col{border-radius:16px;padding:30px 30px;display:flex;flex-direction:column}
+  .col.past{background:var(--paper)}
+  .col.now{background:var(--navy);color:#fff}
+  .col.future{background:var(--paper)}
+  .col .ck{font-weight:800;letter-spacing:1.2px;font-size:14px;text-transform:uppercase;margin-bottom:12px}
+  .col.past .ck{color:var(--teal-deep)}
+  .col.now .ck{color:var(--orange)}
+  .col.future .ck{color:var(--teal-deep)}
+  .col h3{font-family:var(--font-head);font-weight:900;font-size:30px;line-height:1.05;margin-bottom:18px}
+  .col.past h3,.col.future h3{color:var(--navy)}
+  .col.now h3{color:#fff}
+  .col p{font-size:19px;line-height:1.42;margin-bottom:14px}
+  .col.past p,.col.future p{color:var(--ink-mid)}
+  .col.now p{color:#dbe8f4}
+
+  /* two column compare (slide 4) */
+  .cmp{position:absolute;left:70px;right:70px;top:160px;bottom:110px;display:grid;grid-template-columns:1fr 1fr;gap:34px}
+  .cmp .side h4{font-weight:800;letter-spacing:1.2px;font-size:15px;text-transform:uppercase;margin-bottom:20px}
+  .cmp .old h4{color:var(--ink-soft)}
+  .cmp .new h4{color:var(--orange)}
+  .cmp ul{list-style:none;display:flex;flex-direction:column;gap:16px}
+  .cmp li{font-size:21px;line-height:1.34;color:var(--ink-mid);position:relative;padding-left:34px}
+  .cmp .old li::before{content:"✕";position:absolute;left:0;top:0;color:#c0392b;font-weight:900}
+  .cmp .new li{color:var(--ink);font-weight:600}
+  .cmp .new li::before{content:"→";position:absolute;left:0;top:0;color:var(--teal-deep);font-weight:900}
+  .cmp .new{background:var(--paper-soft);border-radius:16px;padding:26px 30px;margin:-26px -6px}
+  .strap{position:absolute;left:70px;right:70px;bottom:78px;text-align:center;font-weight:800;color:var(--navy);font-size:20px}
+
+  /* four pillar framework (slide 5) */
+  .grid4{position:absolute;left:70px;right:70px;top:150px;bottom:118px;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:26px}
+  .pcard{background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(18,56,99,.10);padding:30px 34px 26px;position:relative;border:1px solid #eef1f2}
+  .pnum{position:absolute;left:26px;top:-22px;width:46px;height:46px;border-radius:50%;background:var(--orange);color:#fff;font-family:var(--font-head);font-weight:900;font-size:24px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 14px rgba(234,122,42,.4)}
+  .pcard h3{font-family:var(--font-head);font-weight:900;color:var(--navy);font-size:27px;margin:8px 0 10px}
+  .pcard p{font-size:19px;line-height:1.4;color:var(--ink-mid)}
+  .grid4-strap{position:absolute;left:0;right:0;bottom:76px;text-align:center;font-style:italic;font-weight:700;color:var(--navy);font-size:19px}
+
+  /* pillar detail slides (6-9) */
+  .pillar .peyebrow{color:var(--orange);font-weight:900;font-size:24px;margin-top:6px}
+  .pillar .ptitle{display:flex;align-items:center;gap:20px}
+  .pillar .pbadge{width:64px;height:64px;border-radius:50%;background:var(--orange);color:#fff;font-family:var(--font-head);font-weight:900;font-size:34px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;box-shadow:0 8px 20px rgba(234,122,42,.4)}
+  .pillar h2{font-family:var(--font-head);font-weight:900;font-size:52px;letter-spacing:-1px;color:var(--ink)}
+  .pillar .cols{position:absolute;left:70px;right:70px;top:230px;bottom:96px;display:grid;grid-template-columns:1.05fr .95fr;gap:40px}
+  .pillar .lab{font-weight:800;letter-spacing:1.2px;font-size:14px;text-transform:uppercase;color:var(--teal-deep);margin-bottom:12px}
+  .pillar .demand{font-size:20px;line-height:1.42;color:var(--ink-mid);margin-bottom:26px}
+  .pillar ul{list-style:none;display:flex;flex-direction:column;gap:13px}
+  .pillar li{font-size:19px;line-height:1.34;color:var(--ink-mid);padding-left:24px;position:relative}
+  .pillar li::before{content:"";position:absolute;left:0;top:9px;width:9px;height:9px;border-radius:50%;background:var(--teal)}
+  .pillar .field{background:var(--navy);color:#fff;border-radius:18px;padding:32px 34px;align-self:start}
+  .pillar .field .lab{color:var(--orange)}
+  .pillar .field p{font-size:21px;line-height:1.44;color:#e5eef7}
+  .pillar .field .em{display:block;margin-top:18px;font-style:italic;color:#9fd8d6;font-size:19px}
+
+  /* proof slides (10-11) */
+  .proof .story{position:absolute;left:70px;top:150px;bottom:150px;width:640px;border-radius:18px;padding:34px 36px}
+  .proof.p10 .story{background:var(--paper-soft)}
+  .proof.p11 .story{background:#fff;box-shadow:0 12px 34px rgba(18,56,99,.12);border:1px solid #eef1f2}
+  .proof .story .lab{font-weight:900;letter-spacing:.8px;font-size:16px;margin-bottom:20px}
+  .proof.p10 .story .lab{color:var(--teal-deep)}
+  .proof.p11 .story .lab{color:var(--orange)}
+  .proof .story p{font-size:20px;line-height:1.5;color:var(--ink-mid);margin-bottom:16px}
+  .proof .stats{position:absolute;right:70px;top:150px;width:420px;display:flex;flex-direction:column;gap:20px}
+  .proof .stat{border-radius:14px;padding:22px 26px}
+  .proof.p10 .stat{background:var(--paper)}
+  .proof.p11 .stat{background:#fff;box-shadow:0 8px 22px rgba(18,56,99,.10);border:1px solid #eef1f2}
+  .proof .stat .big{font-family:var(--font-head);font-weight:900;font-size:46px;color:var(--navy);line-height:1}
+  .proof .stat .cap{font-size:17px;color:var(--ink-mid);margin-top:8px}
+  .proof .band{position:absolute;left:70px;bottom:78px;height:64px;display:flex;align-items:center;justify-content:center;padding:0 40px;border-radius:12px;font-weight:800;font-size:20px}
+  .proof.p10 .band{right:520px;background:var(--navy);color:#fff}
+  .proof.p11 .band{right:70px;background:#fff;color:var(--navy);box-shadow:0 8px 22px rgba(18,56,99,.12);border:1px solid #eef1f2}
+
+  /* next: recording to reasoning (12) */
+  .next3{position:absolute;left:70px;right:70px;top:160px;bottom:120px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px}
+  .nstep{background:#fff;border-radius:16px;border:1px solid #eef1f2;box-shadow:0 10px 28px rgba(18,56,99,.08);padding:28px 28px;display:flex;flex-direction:column}
+  .nstep .nk{font-weight:900;letter-spacing:1.4px;font-size:15px;text-transform:uppercase;color:var(--orange);margin-bottom:6px}
+  .nstep h3{font-family:var(--font-head);font-weight:900;color:var(--navy);font-size:26px;line-height:1.06;margin-bottom:16px}
+  .nstep p{font-size:18px;line-height:1.42;color:var(--ink-mid)}
+  .nstep .icn{width:52px;height:52px;border-radius:14px;background:var(--paper-soft);display:flex;align-items:center;justify-content:center;margin-bottom:18px;color:var(--teal-deep)}
+  .nstep .icn svg{width:28px;height:28px}
+  .flow-arrow{position:absolute;top:50%;transform:translateY(-50%);color:var(--orange);font-size:30px;font-weight:900;z-index:5}
+  .next-strap{position:absolute;left:70px;right:70px;bottom:80px;text-align:center;font-weight:800;color:var(--navy);font-size:19px}
+
+  /* closing (13) */
+  .close{background:linear-gradient(155deg,var(--navy) 0%,var(--navy-deep) 100%);color:#fff}
+  .close .oc{border-color:transparent transparent var(--orange) transparent}
+  .close h2{position:absolute;left:80px;right:120px;top:150px;font-family:var(--font-head);font-weight:900;font-size:58px;line-height:1.06;letter-spacing:-1px}
+  .close .pills{position:absolute;left:82px;top:360px;display:flex;gap:14px;flex-wrap:wrap}
+  .close .pill{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:12px 22px;font-weight:800;font-size:19px;color:#eafffe}
+  .close .pill .dot{color:var(--orange);margin-right:8px}
+  .close .nextup{position:absolute;left:82px;right:120px;top:470px;font-size:22px;line-height:1.5;color:#cfe0f0}
+  .close .nextup b{color:#fff}
+  .close .logo-tr{position:absolute;top:44px;right:52px;text-align:right}
+
+  /* ===== Chrome / UI ===== */
+  .ui{position:fixed;z-index:50;font-family:var(--font-body);color:#fff;user-select:none}
+  #topbar{top:0;left:0;right:0;height:4px;background:rgba(255,255,255,.10)}
+  #progress{height:100%;width:0;background:linear-gradient(90deg,var(--orange),#ffb26b);transition:width .5s cubic-bezier(.2,.7,.2,1)}
+
+  #dock{left:50%;bottom:22px;transform:translateX(-50%);display:flex;align-items:center;gap:6px;
+    background:rgba(8,26,25,.72);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.12);
+    border-radius:999px;padding:7px 10px;box-shadow:0 12px 40px rgba(0,0,0,.45)}
+  #dock button{appearance:none;border:0;background:transparent;color:#dcecea;width:40px;height:40px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s,color .2s,transform .15s}
+  #dock button:hover{background:rgba(255,255,255,.12);color:#fff}
+  #dock button:active{transform:scale(.9)}
+  #dock button svg{width:20px;height:20px}
+  #counter{min-width:74px;text-align:center;font-weight:800;font-size:15px;letter-spacing:1px;color:#eafffe;font-variant-numeric:tabular-nums}
+  #counter b{color:#fff}#counter span{color:#7fb7b4}
+  .divider{width:1px;height:24px;background:rgba(255,255,255,.14);margin:0 4px}
+
+  #dots{position:fixed;left:50%;bottom:80px;transform:translateX(-50%);display:flex;gap:9px;z-index:50}
+  #dots i{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.28);cursor:pointer;transition:transform .25s,background .25s}
+  #dots i.on{background:var(--orange);transform:scale(1.5)}
+  #dots i:hover{background:rgba(255,255,255,.6)}
+
+  #hint{position:fixed;left:22px;bottom:24px;z-index:50;color:#bfe0de;font-size:13px;line-height:1.7;
+    background:rgba(8,26,25,.62);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.10);
+    border-radius:12px;padding:12px 16px;max-width:260px;transition:opacity .6s;pointer-events:none}
+  #hint b{color:#fff}
+  #hint kbd{background:rgba(255,255,255,.14);border-radius:5px;padding:1px 7px;font-family:inherit;font-size:12px;color:#fff}
+  #hint.hide{opacity:0}
+
+  #brandtag{position:fixed;top:18px;left:22px;z-index:50;display:flex;align-items:center;gap:10px;color:#cfeae8;font-size:13px;font-weight:700;letter-spacing:.3px}
+  #brandtag .m{width:26px;height:26px}
+
+  .ovnote{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:50;color:#eafffe;font-weight:800;
+    letter-spacing:2px;font-size:14px;text-transform:uppercase;opacity:0;transition:opacity .5s;pointer-events:none}
+  body.overview .ovnote{opacity:1}
+  body.overview #dots{opacity:0;pointer-events:none}
+
+  @media (max-width:640px){
+    #hint{display:none}
+    #brandtag{font-size:11px}
+    #dock button{width:38px;height:38px}
+  }
+</style>
+</head>
+<body>
+<div id="viewport">
+  <div id="world">
+
+    <!-- ============ SLIDE 1 — COVER ============ -->
+    <section class="slide cover" data-x="0" data-y="0" data-s="1">
+      <div class="swirlwrap">
+        <div class="swirl">
+          <div class="ring" style="transform:scale(1)"></div>
+          <div class="ring" style="transform:scale(.78)"></div>
+          <div class="ring" style="transform:scale(.56)"></div>
+          <div class="ring" style="transform:scale(.36)"></div>
+          <div class="ring" style="transform:scale(.18)"></div>
+        </div>
+      </div>
+      <div class="whitecut2"></div>
+      <div class="logo-tr rvs" style="--d:120">
+        <div class="mark" style="justify-content:flex-end">
+          <svg width="52" height="52" viewBox="0 0 100 100" aria-hidden="true">
+            <path d="M50 12 L92 44 L76 44 L50 24 L24 44 L8 44 Z" fill="#EA7A2A"/>
+            <rect x="22" y="46" width="14" height="40" fill="#123863"/>
+            <rect x="43" y="46" width="14" height="40" fill="#17A2A0"/>
+            <rect x="64" y="46" width="14" height="40" fill="#123863"/>
+          </svg>
+          <span class="wm" style="font-size:40px;color:#123863">BSCAI</span>
+        </div>
+        <div style="font-size:12px;font-weight:800;letter-spacing:1px;color:#123863;margin-top:2px">BUILDING SERVICE CONTRACTORS<br>ASSOCIATION INTERNATIONAL</div>
+      </div>
+      <h1 class="rv" style="--d:220">Service Delivery in Motion:<br>Real-Time Work Validation<br>Driven by Customers</h1>
+      <div class="subttl rv" style="--d:420">BSCAI Virtual Technology Summit 2026 — Session 5 · July 16</div>
+    </section>
+
+    <!-- ============ SLIDE 2 — QUESTION ============ -->
+    <section class="slide quote" data-x="1900" data-y="0" data-s="1">
+      <div class="qmark rvs" style="--d:60">“</div>
+      <h2 class="rv" style="--d:160">Who cleaned what, when —<br>and to what standard?</h2>
+      <p class="rv" style="--d:360">Your customers are already asking. A monthly QA report is no longer the answer.</p>
+    </section>
+
+    <!-- ============ SLIDE 3 — WHERE IT'S HEADING ============ -->
+    <section class="slide" data-x="3800" data-y="0" data-s="1">
+      <div class="pad">
+        <h2 class="title-lg rv">Where service validation is heading</h2>
+        <div class="cols3">
+          <div class="col past rv" style="--d:120">
+            <div class="ck">Past</div>
+            <h3>Paper &amp; audits</h3>
+            <p>Sign-in sheets, log books and periodic inspections. Proof was retrospective, sampled and easy to dispute.</p>
+            <p>Problems surfaced weeks later — if at all.</p>
+          </div>
+          <div class="col now rv" style="--d:240">
+            <div class="ck">Today — our focus</div>
+            <h3>Real-time validation apps</h3>
+            <p>Mobile clock-in with identity, geofencing and task-level evidence.</p>
+            <p>Customers expect to see the work as it happens — live, not in a monthly report.</p>
+          </div>
+          <div class="col future rv" style="--d:360">
+            <div class="ck">Future</div>
+            <h3>AI-driven assurance</h3>
+            <p>From recording to reasoning: anomaly and coverage detection, auto-written client reports.</p>
+            <p>Natural-language answers: “Was the lobby done at 6pm?”</p>
+          </div>
+        </div>
+      </div>
+      <div class="footer"><div class="fmark"><svg width="24" height="24" viewBox="0 0 100 100"><path d="M50 12 L92 44 L76 44 L50 24 L24 44 L8 44 Z" fill="#fff"/><rect x="22" y="46" width="14" height="40" fill="#fff"/><rect x="43" y="46" width="14" height="40" fill="#fff"/><rect x="64" y="46" width="14" height="40" fill="#fff"/></svg><span class="wm wht" style="font-size:19px;color:#fff">BSCAI</span></div><span class="tag">Driving Excellence in <b>Commercial Cleaning</b></span><span class="pg">3</span><div class="corner"></div></div>
+    </section>
+
+    <!-- ============ SLIDE 4 — WHY PAPER STOPPED WINNING ============ -->
+    <section class="slide" data-x="5700" data-y="0" data-s="1">
+      <div class="pad">
+        <h2 class="title-lg rv">Why paper stopped winning</h2>
+        <div class="cmp">
+          <div class="side old rv" style="--d:130">
+            <h4>The old model</h4>
+            <ul>
+              <li>Retrospective — proof assembled after the fact</li>
+              <li>Sampled — a few inspections stood in for everything</li>
+              <li>Disputable — your word against the complaint</li>
+              <li>Slow — problems surfaced weeks later</li>
+            </ul>
+          </div>
+          <div class="side new rv" style="--d:260">
+            <h4>What buyers expect now</h4>
+            <ul>
+              <li>Watch the work as it happens</li>
+              <li>Time-stamped, photo-evidenced audit trail</li>
+              <li>Live dashboards — in operations and in the bid room</li>
+              <li>Issues surfaced the same shift, not next month</li>
+            </ul>
+          </div>
+        </div>
+        <div class="strap rv" style="--d:420">Your next RFP will be judged against operators who show up with software.</div>
+      </div>
+      <div class="footer"><div class="fmark"><svg width="24" height="24" viewBox="0 0 100 100"><path d="M50 12 L92 44 L76 44 L50 24 L24 44 L8 44 Z" fill="#fff"/><rect x="22" y="46" width="14" height="40" fill="#fff"/><rect x="43" y="46" width="14" height="40" fill="#fff"/><rect x="64" y="46" width="14" height="40" fill="#fff"/></svg><span class="wm wht" style="font-size:19px;color:#fff">BSCAI</span></div><span class="tag">Driving Excellence in <b>Commercial Cleaning</b></span><span class="pg">4</span><div class="corner"></div></div>
+    </section>
+
+    <!-- ============ SLIDE 5 — FOUR-PILLAR FRAMEWORK (HUB) ============ -->
+    <section class="slide" data-x="8000" data-y="0" data-s="1">
+      <div class="pad">
+        <h2 class="title-lg rv">The four-pillar framework</h2>
+        <div class="grid4">
+          <div class="pcard rv" style="--d:120"><div class="pnum">1</div><h3>Configurability</h3><p>Validation that matches the contract — depth, detail, routing and scope rules.</p></div>
+          <div class="pcard rv" style="--d:220"><div class="pnum">2</div><h3>UI ease</h3><p>Crews actually use it — natural language, offline-ready, mobile-first.</p></div>
+          <div class="pcard rv" style="--d:320"><div class="pnum">3</div><h3>Real-time customer access</h3><p>Customers see the work — dashboards, permissions, public QR.</p></div>
+          <div class="pcard rv" style="--d:420"><div class="pnum">4</div><h3>System integration</h3><p>Flows into your stack — time &amp; labor, job costing, HR, ticketing.</p></div>
+        </div>
+        <div class="grid4-strap rv" style="--d:540">A vendor-neutral checklist you can apply Monday.</div>
+      </div>
+      <div class="footer"><div class="fmark"><svg width="24" height="24" viewBox="0 0 100 100"><path d="M50 12 L92 44 L76 44 L50 24 L24 44 L8 44 Z" fill="#fff"/><rect x="22" y="46" width="14" height="40" fill="#fff"/><rect x="43" y="46" width="14" height="40" fill="#fff"/><rect x="64" y="46" width="14" height="40" fill="#fff"/></svg><span class="wm wht" style="font-size:19px;color:#fff">BSCAI</span></div><span class="tag">Driving Excellence in <b>Commercial Cleaning</b></span><span class="pg">5</span><div class="corner"></div></div>
+    </section>
+
+    <!-- ============ SLIDE 6 — PILLAR 1 ============ -->
+    <section class="slide pillar" data-x="7500" data-y="780" data-s="0.34">
+      <div class="pad">
+        <div class="ptitle rv"><div class="pbadge">1</div><h2>Configurability</h2></div>
+        <div class="peyebrow rv" style="--d:80">Validation that matches the contract.</div>
+        <div class="cols">
+          <div>
+            <div class="lab rv" style="--d:140">The customer demand</div>
+            <div class="demand rv" style="--d:180">Every contract scopes work differently. Validation that can't mirror the contract creates noise, not proof.</div>
+            <div class="lab rv" style="--d:240">What good looks like</div>
+            <ul>
+              <li class="rv" style="--d:290">Task depth and detail set per site and per scope</li>
+              <li class="rv" style="--d:330">Routing rules — who validates what, in what order</li>
+              <li class="rv" style="--d:370">Evidence requirements per task: photo, time, notes</li>
+              <li class="rv" style="--d:410">Changes ship in days, not release cycles</li>
+            </ul>
+          </div>
+          <div class="field rvs" style="--d:260">
+            <div class="lab">From the field</div>
+            <p>An industrial site structured 22+ locations per cleaning route — restrooms, equipment areas, high-traffic zones — into one mobile workflow that mirrors the contract scope.<span class="em">QR-verified locations, route by route.</span></p>
+          </div>
+        </div>
+      </div>
+      <div class="oc"></div>
+      <div class="footer" style="background:transparent"><span class="pg" style="color:rgba(20,32,43,.55)">6</span></div>
+    </section>
+
+    <!-- ============ SLIDE 7 — PILLAR 2 ============ -->
+    <section class="slide pillar" data-x="8500" data-y="780" data-s="0.34">
+      <div class="pad">
+        <div class="ptitle rv"><div class="pbadge">2</div><h2>UI ease</h2></div>
+        <div class="peyebrow rv" style="--d:80">Crews actually use it.</div>
+        <div class="cols">
+          <div>
+            <div class="lab rv" style="--d:140">The customer demand</div>
+            <div class="demand rv" style="--d:180">Adoption is the real test. If the frontline won't use it, the data doesn't exist.</div>
+            <div class="lab rv" style="--d:240">What good looks like</div>
+            <ul>
+              <li class="rv" style="--d:290">Mobile-first — works like the apps crews already know</li>
+              <li class="rv" style="--d:330">Natural-language task lists, multilingual</li>
+              <li class="rv" style="--d:370">Works offline and in poor-connectivity buildings</li>
+              <li class="rv" style="--d:410">Minimal training to first completed route</li>
+            </ul>
+          </div>
+          <div class="field rvs" style="--d:260">
+            <div class="lab">From the field</div>
+            <p>Crews with minimal formal training hit 100% route completion on Day 1 of go-live — because validation lived inside the app they already clocked in with.<span class="em">Adoption by default, not by mandate.</span></p>
+          </div>
+        </div>
+      </div>
+      <div class="oc"></div>
+      <div class="footer" style="background:transparent"><span class="pg" style="color:rgba(20,32,43,.55)">7</span></div>
+    </section>
+
+    <!-- ============ SLIDE 8 — PILLAR 3 ============ -->
+    <section class="slide pillar" data-x="7500" data-y="1320" data-s="0.34">
+      <div class="pad">
+        <div class="ptitle rv"><div class="pbadge">3</div><h2>Customer access</h2></div>
+        <div class="peyebrow rv" style="--d:80">Customers see the work — in real time.</div>
+        <div class="cols">
+          <div>
+            <div class="lab rv" style="--d:140">The customer demand</div>
+            <div class="demand rv" style="--d:180">Service validation is customer-facing. Your client's leadership will look at this screen.</div>
+            <div class="lab rv" style="--d:240">What good looks like</div>
+            <ul>
+              <li class="rv" style="--d:290">Client-facing dashboards, separate from internal ops views</li>
+              <li class="rv" style="--d:330">Security permissions per role and per site</li>
+              <li class="rv" style="--d:370">Public QR — occupants report issues the same shift</li>
+              <li class="rv" style="--d:410">Filter by route, shift, supervisor or location</li>
+            </ul>
+          </div>
+          <div class="field rvs" style="--d:260">
+            <div class="lab">From the field</div>
+            <p>A plant manager reviewed live validation dashboards and requested new views on the spot — customer feedback that shaped the product roadmap.<span class="em">Transparency became the sales pitch.</span></p>
+          </div>
+        </div>
+      </div>
+      <div class="oc"></div>
+      <div class="footer" style="background:transparent"><span class="pg" style="color:rgba(20,32,43,.55)">8</span></div>
+    </section>
+
+    <!-- ============ SLIDE 9 — PILLAR 4 ============ -->
+    <section class="slide pillar" data-x="8500" data-y="1320" data-s="0.34">
+      <div class="pad">
+        <div class="ptitle rv"><div class="pbadge">4</div><h2>System integration</h2></div>
+        <div class="peyebrow rv" style="--d:80">Flows into the stack you already run.</div>
+        <div class="cols">
+          <div>
+            <div class="lab rv" style="--d:140">The customer demand</div>
+            <div class="demand rv" style="--d:180">Validation data in a silo is one more seam to reconcile. It should land where you run the business.</div>
+            <div class="lab rv" style="--d:240">What good looks like</div>
+            <ul>
+              <li class="rv" style="--d:290">Tied to time &amp; labor — same clock-in, same identity</li>
+              <li class="rv" style="--d:330">Job costing and GL — evidence attributed to the job</li>
+              <li class="rv" style="--d:370">HR and training records connected</li>
+              <li class="rv" style="--d:410">Client ticketing systems in the loop</li>
+            </ul>
+          </div>
+          <div class="field rvs" style="--d:260">
+            <div class="lab">From the field</div>
+            <p>One app for the employee — clock in, see the route, validate the work. One data spine for the operator — every event tied to time, job cost and HR.<span class="em">The whole workforce operating system, one front door.</span></p>
+          </div>
+        </div>
+      </div>
+      <div class="oc"></div>
+      <div class="footer" style="background:transparent"><span class="pg" style="color:rgba(20,32,43,.55)">9</span></div>
+    </section>
+
+    <!-- ============ SLIDE 10 — PROOF: PLANT ============ -->
+    <section class="slide proof p10" data-x="10600" data-y="0" data-s="1">
+      <div class="pad" style="padding-bottom:0">
+        <h2 class="title-lg rv">Proof: one app, whole workforce</h2>
+      </div>
+      <div class="story rv" style="--d:130">
+        <div class="lab">A national industrial BSC — Tier-1 manufacturing plant</div>
+        <p>Crews already clocked in on the platform: identity, time and job costing lived in one place. Service validation arrived as a new tab in the tool employees opened every shift — not another app to learn.</p>
+        <p>Two technicians with minimal formal training demoed it to the plant's leadership, with no vendor in the room. It landed — and the pilot became an org-wide standard.</p>
+      </div>
+      <div class="stats">
+        <div class="stat rvs" style="--d:200"><div class="big">100%</div><div class="cap">route completion on Day 1</div></div>
+        <div class="stat rvs" style="--d:300"><div class="big">22+</div><div class="cap">locations per route, one workflow</div></div>
+        <div class="stat rvs" style="--d:400"><div class="big">90 days</div><div class="cap">from pilot to org-wide standard</div></div>
+      </div>
+      <div class="band rv" style="--d:520">One place for the employee, one data spine for the operator. (Pillars 2 + 4)</div>
+      <div class="footer"><div class="fmark"><svg width="24" height="24" viewBox="0 0 100 100"><path d="M50 12 L92 44 L76 44 L50 24 L24 44 L8 44 Z" fill="#fff"/><rect x="22" y="46" width="14" height="40" fill="#fff"/><rect x="43" y="46" width="14" height="40" fill="#fff"/><rect x="64" y="46" width="14" height="40" fill="#fff"/></svg><span class="wm wht" style="font-size:19px;color:#fff">BSCAI</span></div><span class="tag">Driving Excellence in <b>Commercial Cleaning</b></span><span class="pg">10</span><div class="corner"></div></div>
+    </section>
+
+    <!-- ============ SLIDE 11 — PROOF: AIRPORT ============ -->
+    <section class="slide proof p11" data-x="12500" data-y="0" data-s="1" style="background:var(--teal)">
+      <div class="pad" style="padding-bottom:0">
+        <h2 class="title-lg rv" style="color:#fff">Proof: cleaning that answers to flights</h2>
+      </div>
+      <div class="story rv" style="--d:130">
+        <div class="lab">A major Canadian airport — 10-year contract</div>
+        <p>The airport invited innovation on a decade-long industrial cleaning bid. The winning answer replaced static schedules with a demand engine: live flight data generates and assigns work as gates cycle through arrivals and departures.</p>
+        <p>Every gate cleaning captures pre/post photos and time-on-task. Dispatchers reassign work in real time as flight schedules shift.</p>
+      </div>
+      <div class="stats">
+        <div class="stat rvs" style="--d:200"><div class="big">10 yrs</div><div class="cap">contract won — software cited as a deciding factor</div></div>
+        <div class="stat rvs" style="--d:300"><div class="big">600+</div><div class="cap">locations in the audit cycle</div></div>
+        <div class="stat rvs" style="--d:400"><div class="big">Live</div><div class="cap">work tickets generated from flight data</div></div>
+      </div>
+      <div class="band rv" style="--d:520">Configured to the contract, visible to the customer — that won the bid. (Pillars 1 + 3)</div>
+      <div class="footer"><div class="fmark"><svg width="24" height="24" viewBox="0 0 100 100"><path d="M50 12 L92 44 L76 44 L50 24 L24 44 L8 44 Z" fill="#fff"/><rect x="22" y="46" width="14" height="40" fill="#fff"/><rect x="43" y="46" width="14" height="40" fill="#fff"/><rect x="64" y="46" width="14" height="40" fill="#fff"/></svg><span class="wm wht" style="font-size:19px;color:#fff">BSCAI</span></div><span class="tag">Driving Excellence in <b>Commercial Cleaning</b></span><span class="pg">11</span><div class="corner"></div></div>
+    </section>
+
+    <!-- ============ SLIDE 12 — NEXT: RECORDING TO REASONING ============ -->
+    <section class="slide" data-x="14400" data-y="0" data-s="1">
+      <div class="pad">
+        <h2 class="title-lg rv">Next: from recording to reasoning</h2>
+        <div class="next3">
+          <div class="nstep rv" style="--d:120">
+            <div class="icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></div>
+            <div class="nk">Detect</div>
+            <h3>Anomaly &amp; coverage detection</h3>
+            <p>The missed restroom gets flagged before your client notices — coverage gaps surface themselves.</p>
+          </div>
+          <div class="nstep rv" style="--d:240">
+            <div class="icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 13h7M9 17h7"/></svg></div>
+            <div class="nk">Report</div>
+            <h3>Auto-written client reports</h3>
+            <p>The monthly QA narrative writes itself from the evidence trail. Hours of reporting become minutes of review.</p>
+          </div>
+          <div class="nstep rv" style="--d:360">
+            <div class="icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V6a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></svg></div>
+            <div class="nk">Answer</div>
+            <h3>Natural-language assurance</h3>
+            <p>“Was the lobby done by 6pm?” Answered instantly from the audit trail — by anyone, in plain English.</p>
+          </div>
+        </div>
+        <div class="flow-arrow rv" style="--d:200;left:calc(33.3% + 12px)">→</div>
+        <div class="flow-arrow rv" style="--d:320;left:calc(66.6% + 24px)">→</div>
+        <div class="next-strap rv" style="--d:460">AI assurance is only as good as its data foundation — the four pillars are how you build it.</div>
+      </div>
+      <div class="footer"><div class="fmark"><svg width="24" height="24" viewBox="0 0 100 100"><path d="M50 12 L92 44 L76 44 L50 24 L24 44 L8 44 Z" fill="#fff"/><rect x="22" y="46" width="14" height="40" fill="#fff"/><rect x="43" y="46" width="14" height="40" fill="#fff"/><rect x="64" y="46" width="14" height="40" fill="#fff"/></svg><span class="wm wht" style="font-size:19px;color:#fff">BSCAI</span></div><span class="tag">Driving Excellence in <b>Commercial Cleaning</b></span><span class="pg">12</span><div class="corner"></div></div>
+    </section>
+
+    <!-- ============ SLIDE 13 — CLOSING ============ -->
+    <section class="slide close" data-x="16300" data-y="0" data-s="1">
+      <div class="logo-tr rvs" style="--d:100">
+        <div class="mark" style="justify-content:flex-end">
+          <svg width="46" height="46" viewBox="0 0 100 100"><path d="M50 12 L92 44 L76 44 L50 24 L24 44 L8 44 Z" fill="#EA7A2A"/><rect x="22" y="46" width="14" height="40" fill="#fff"/><rect x="43" y="46" width="14" height="40" fill="#17A2A0"/><rect x="64" y="46" width="14" height="40" fill="#fff"/></svg>
+          <span class="wm wht" style="font-size:34px">BSCAI</span>
+        </div>
+      </div>
+      <h2 class="rv">Validate in real time.<br>Then dashboard it.</h2>
+      <div class="pills">
+        <div class="pill rv" style="--d:200"><span class="dot">●</span>Configurability</div>
+        <div class="pill rv" style="--d:260"><span class="dot">●</span>UI ease</div>
+        <div class="pill rv" style="--d:320"><span class="dot">●</span>Customer access</div>
+        <div class="pill rv" style="--d:380"><span class="dot">●</span>Integration</div>
+      </div>
+      <div class="nextup rv" style="--d:480">That is what to validate. Up next in <b>Session 6</b>: Bianca Espinosa, Harvard Maintenance, on dashboarding and reporting the data.</div>
+      <div class="oc"></div>
+    </section>
+
+  </div>
+</div>
+
+<!-- ===== UI CHROME ===== -->
+<div id="topbar" class="ui"><div id="progress"></div></div>
+
+<div id="brandtag" class="ui">
+  <svg class="m" viewBox="0 0 100 100" aria-hidden="true"><path d="M50 12 L92 44 L76 44 L50 24 L24 44 L8 44 Z" fill="#EA7A2A"/><rect x="22" y="46" width="14" height="40" fill="#e6f6f5"/><rect x="43" y="46" width="14" height="40" fill="#17A2A0"/><rect x="64" y="46" width="14" height="40" fill="#e6f6f5"/></svg>
+  <span>Session 5 · Service Delivery in Motion</span>
+</div>
+
+<div class="ovnote ui">Story map — click any slide to dive in</div>
+
+<div id="dots" class="ui"></div>
+
+<div id="dock" class="ui">
+  <button id="btnFirst" title="First (Home)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6l-8 6 8 6"/><path d="M8 6v12"/></svg></button>
+  <button id="btnPrev" title="Previous (←)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+  <div id="counter"><b>01</b> <span>/ 13</span></div>
+  <button id="btnNext" title="Next (→ / Space)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>
+  <div class="divider"></div>
+  <button id="btnZoomOut" title="Zoom out (−)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4M8 11h6"/></svg></button>
+  <button id="btnOverview" title="Story map (O)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></button>
+  <button id="btnZoomIn" title="Zoom in (+)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4M11 8v6M8 11h6"/></svg></button>
+  <div class="divider"></div>
+  <button id="btnFull" title="Fullscreen (F)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button>
+</div>
+
+<div id="hint" class="ui">
+  <b>Navigate the story</b><br>
+  <kbd>→</kbd> next · <kbd>←</kbd> back · <kbd>O</kbd> map<br>
+  Scroll / pinch to zoom · drag to pan
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var BASE_W=1280, BASE_H=720;
+  var world=document.getElementById('world');
+  var viewport=document.getElementById('viewport');
+  var slideEls=Array.prototype.slice.call(world.querySelectorAll('.slide'));
+
+  // Build slide model + position DOM in world space
+  var slides=slideEls.map(function(el,i){
+    var x=parseFloat(el.dataset.x), y=parseFloat(el.dataset.y), s=parseFloat(el.dataset.s);
+    el.style.left=(x-BASE_W/2)+'px';
+    el.style.top=(y-BASE_H/2)+'px';
+    el.style.transform='scale('+s+')';   // scale about its own center (transform-origin 50% 50%)
+    return {el:el,x:x,y:y,s:s,i:i};
+  });
+
+  var vw=window.innerWidth, vh=window.innerHeight;
+  function fit(){ return Math.min(vw/BASE_W, vh/BASE_H); }
+
+  // Camera state (world point at viewport centre + scale k)
+  var cam={cx:slides[0].x, cy:slides[0].y, k:fit()/slides[0].s};
+  var current=0;
+  var overview=false;
+
+  // ---- Tween ----
+  var tween=null;
+  function easeInOut(t){ return t<0.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2; }
+  var now=(function(){ return (window.performance&&performance.now)?function(){return performance.now();}:function(){return Date.now();}; })();
+
+  function startTween(target, dur){
+    var from={cx:cam.cx, cy:cam.cy, k:cam.k};
+    // dolly: zoom out mid-flight proportional to travel so long jumps read as a fly-over
+    var travel=Math.hypot(target.cx-from.cx, target.cy-from.cy);
+    var avgScreen=(from.k+target.k)/2;
+    var screenTravel=travel*avgScreen;
+    var dip=Math.min(0.55, screenTravel/(Math.max(vw,vh)*2.2)); // 0..0.55
+    tween={from:from, to:target, t0:now(), dur:dur||900, dip:dip};
+    if(!rafOn){ rafOn=true; requestAnimationFrame(loop); }
+  }
+
+  var rafOn=false;
+  function loop(){
+    if(tween){
+      var e=(now()-tween.t0)/tween.dur;
+      if(e>=1){ cam.cx=tween.to.cx; cam.cy=tween.to.cy; cam.k=tween.to.k; tween=null; }
+      else{
+        var te=easeInOut(e);
+        cam.cx=tween.from.cx+(tween.to.cx-tween.from.cx)*te;
+        cam.cy=tween.from.cy+(tween.to.cy-tween.from.cy)*te;
+        var kBase=tween.from.k+(tween.to.k-tween.from.k)*te;
+        var bell=Math.sin(Math.PI*e);          // 0..1..0
+        cam.k=kBase*(1-tween.dip*bell);
+      }
+      applyCam();
+    }
+    if(tween){ requestAnimationFrame(loop); } else { rafOn=false; }
+  }
+
+  function applyCam(){
+    world.style.transform='translate('+(vw/2)+'px,'+(vh/2)+'px) scale('+cam.k+') translate('+(-cam.cx)+'px,'+(-cam.cy)+'px)';
+  }
+
+  // ---- Focus a slide ----
+  function focus(i, dur){
+    if(i<0) i=0; if(i>slides.length-1) i=slides.length-1;
+    setActive(i);
+    current=i;
+    if(overview){ overview=false; document.body.classList.remove('overview'); }
+    var s=slides[i];
+    startTween({cx:s.x, cy:s.y, k:fit()/s.s}, dur);
+    updateChrome();
+  }
+
+  var activeIdx=-1;
+  function setActive(i){
+    if(activeIdx===i) return;
+    if(activeIdx>=0) slides[activeIdx].el.classList.remove('is-active');
+    activeIdx=i;
+    if(i>=0){
+      // restart reveal: force reflow so re-entering replays the animation
+      var el=slides[i].el;
+      el.classList.remove('is-active'); void el.offsetWidth; el.classList.add('is-active');
+    }
+  }
+
+  function updateChrome(){
+    var n=current+1;
+    document.getElementById('counter').innerHTML='<b>'+(n<10?'0'+n:n)+'</b> <span>/ 13</span>';
+    document.getElementById('progress').style.width=(current/(slides.length-1)*100)+'%';
+    var dd=document.querySelectorAll('#dots i');
+    for(var j=0;j<dd.length;j++){ dd[j].classList.toggle('on', j===current); }
+  }
+
+  // ---- Overview / story map ----
+  function showOverview(){
+    overview=true; document.body.classList.add('overview');
+    var minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+    slides.forEach(function(s){
+      var hw=BASE_W*s.s/2, hh=BASE_H*s.s/2;
+      minX=Math.min(minX,s.x-hw); maxX=Math.max(maxX,s.x+hw);
+      minY=Math.min(minY,s.y-hh); maxY=Math.max(maxY,s.y+hh);
+    });
+    var pad=260;
+    var bw=(maxX-minX)+pad*2, bh=(maxY-minY)+pad*2;
+    var k=Math.min(vw/bw, vh/bh);
+    startTween({cx:(minX+maxX)/2, cy:(minY+maxY)/2, k:k}, 950);
+    updateChrome();
+  }
+  function toggleOverview(){ overview ? focus(current,900) : showOverview(); }
+
+  // ---- Manual camera control (cancels tween) ----
+  function manual(){ tween=null; if(overview){ overview=false; document.body.classList.remove('overview'); } }
+  var K_MIN, K_MAX;
+  function clampK(k){ return Math.max(K_MIN, Math.min(K_MAX, k)); }
+  function recomputeLimits(){ K_MIN=fit()/ (slides.length*1.4); K_MAX=fit()/slides[0].s*7; }
+
+  function zoomAt(px,py,factor){
+    manual();
+    var Wx=cam.cx+(px-vw/2)/cam.k, Wy=cam.cy+(py-vh/2)/cam.k;
+    cam.k=clampK(cam.k*factor);
+    cam.cx=Wx-(px-vw/2)/cam.k; cam.cy=Wy-(py-vh/2)/cam.k;
+    applyCam(); syncNearest();
+  }
+  function panBy(dx,dy){ manual(); cam.cx-=dx/cam.k; cam.cy-=dy/cam.k; applyCam(); syncNearest(); }
+
+  // keep dots/progress roughly synced to nearest slide while free-roaming
+  var syncTimer=null;
+  function syncNearest(){
+    if(syncTimer) return;
+    syncTimer=setTimeout(function(){
+      syncTimer=null;
+      var best=0,bd=Infinity;
+      for(var j=0;j<slides.length;j++){
+        var d=Math.hypot(slides[j].x-cam.cx, slides[j].y-cam.cy);
+        if(d<bd){bd=d;best=j;}
+      }
+      if(best!==current){ current=best; setActive(best); updateChrome(); }
+    },90);
+  }
+
+  // ---- Wheel: zoom toward cursor ----
+  viewport.addEventListener('wheel', function(e){
+    e.preventDefault();
+    var factor=Math.exp(-e.deltaY*0.0016*(e.ctrlKey?2:1));
+    zoomAt(e.clientX, e.clientY, factor);
+    hideHint();
+  }, {passive:false});
+
+  // ---- Mouse drag pan ----
+  var dragging=false, lastX=0, lastY=0, moved=0;
+  viewport.addEventListener('mousedown', function(e){
+    if(e.button!==0) return;
+    dragging=true; moved=0; lastX=e.clientX; lastY=e.clientY; viewport.style.cursor='grabbing';
+  });
+  window.addEventListener('mousemove', function(e){
+    if(!dragging) return;
+    var dx=e.clientX-lastX, dy=e.clientY-lastY; lastX=e.clientX; lastY=e.clientY;
+    moved+=Math.abs(dx)+Math.abs(dy);
+    panBy(dx,dy); hideHint();
+  });
+  window.addEventListener('mouseup', function(){ dragging=false; viewport.style.cursor=''; });
+
+  // double-click: dive into nearest slide (or zoom out if already there)
+  viewport.addEventListener('dblclick', function(e){
+    var best=0,bd=Infinity;
+    for(var j=0;j<slides.length;j++){
+      var d=Math.hypot(slides[j].x-cam.cx, slides[j].y-cam.cy);
+      if(d<bd){bd=d;best=j;}
+    }
+    focus(best,750);
+  });
+
+  // ---- Touch: 1-finger pan, 2-finger pinch ----
+  var touches={}, pinch=null;
+  viewport.addEventListener('touchstart', function(e){
+    for(var i=0;i<e.changedTouches.length;i++){ var t=e.changedTouches[i]; touches[t.identifier]={x:t.clientX,y:t.clientY}; }
+    var ids=Object.keys(touches);
+    if(ids.length===2){
+      var a=touches[ids[0]], b=touches[ids[1]];
+      pinch={d:Math.hypot(a.x-b.x,a.y-b.y), mx:(a.x+b.x)/2, my:(a.y+b.y)/2};
+    }
+    hideHint();
+  }, {passive:false});
+  viewport.addEventListener('touchmove', function(e){
+    e.preventDefault();
+    for(var i=0;i<e.changedTouches.length;i++){ var t=e.changedTouches[i]; if(touches[t.identifier]) { touches[t.identifier].nx=t.clientX; touches[t.identifier].ny=t.clientY; } }
+    var ids=Object.keys(touches);
+    if(ids.length>=2 && pinch){
+      var a=touches[ids[0]], b=touches[ids[1]];
+      var ax=a.nx!=null?a.nx:a.x, ay=a.ny!=null?a.ny:a.y, bx=b.nx!=null?b.nx:b.x, by=b.ny!=null?b.ny:b.y;
+      var nd=Math.hypot(ax-bx,ay-by), nmx=(ax+bx)/2, nmy=(ay+by)/2;
+      if(pinch.d>0){ zoomAt(nmx,nmy, nd/pinch.d); }
+      panBy(nmx-pinch.mx, nmy-pinch.my);
+      pinch.d=nd; pinch.mx=nmx; pinch.my=nmy;
+      a.x=ax;a.y=ay;b.x=bx;b.y=by;
+    } else if(ids.length===1){
+      var t0=touches[ids[0]];
+      var nx=t0.nx!=null?t0.nx:t0.x, ny=t0.ny!=null?t0.ny:t0.y;
+      panBy(nx-t0.x, ny-t0.y); t0.x=nx; t0.y=ny;
+    }
+  }, {passive:false});
+  function endTouch(e){
+    for(var i=0;i<e.changedTouches.length;i++){ delete touches[e.changedTouches[i].identifier]; }
+    if(Object.keys(touches).length<2) pinch=null;
+  }
+  viewport.addEventListener('touchend', endTouch);
+  viewport.addEventListener('touchcancel', endTouch);
+
+  // ---- Keyboard ----
+  window.addEventListener('keydown', function(e){
+    switch(e.key){
+      case 'ArrowRight': case 'PageDown': case ' ': e.preventDefault(); focus(current+1); hideHint(); break;
+      case 'ArrowLeft': case 'PageUp': e.preventDefault(); focus(current-1); hideHint(); break;
+      case 'Home': focus(0); break;
+      case 'End': focus(slides.length-1); break;
+      case 'o': case 'O': toggleOverview(); break;
+      case 'Escape': if(overview) focus(current,900); break;
+      case 'f': case 'F': toggleFull(); break;
+      case '+': case '=': zoomAt(vw/2,vh/2,1.25); break;
+      case '-': case '_': zoomAt(vw/2,vh/2,0.8); break;
+      default:
+        if(e.key>='1'&&e.key<='9'){ focus(parseInt(e.key,10)-1); }
+    }
+  });
+
+  // ---- Buttons ----
+  document.getElementById('btnNext').onclick=function(){focus(current+1);hideHint();};
+  document.getElementById('btnPrev').onclick=function(){focus(current-1);hideHint();};
+  document.getElementById('btnFirst').onclick=function(){focus(0);};
+  document.getElementById('btnOverview').onclick=toggleOverview;
+  document.getElementById('btnZoomIn').onclick=function(){zoomAt(vw/2,vh/2,1.3);};
+  document.getElementById('btnZoomOut').onclick=function(){zoomAt(vw/2,vh/2,0.77);};
+  document.getElementById('btnFull').onclick=toggleFull;
+
+  function toggleFull(){
+    if(!document.fullscreenElement){ (document.documentElement.requestFullscreen||function(){})(); }
+    else if(document.exitFullscreen){ document.exitFullscreen(); }
+  }
+
+  // ---- Dots ----
+  var dots=document.getElementById('dots');
+  slides.forEach(function(s,i){
+    var d=document.createElement('i'); d.title='Slide '+(i+1);
+    d.onclick=function(){ focus(i); }; dots.appendChild(d);
+  });
+
+  // ---- Hint auto-hide ----
+  var hintEl=document.getElementById('hint'), hintHidden=false;
+  function hideHint(){ if(!hintHidden){ hintHidden=true; hintEl.classList.add('hide'); } }
+  setTimeout(hideHint, 6500);
+
+  // ---- Resize ----
+  window.addEventListener('resize', function(){
+    vw=window.innerWidth; vh=window.innerHeight; recomputeLimits();
+    if(overview){ showOverview(); }
+    else { var s=slides[current]; cam.cx=s.x; cam.cy=s.y; cam.k=fit()/s.s; applyCam(); }
+  });
+
+  // ---- Init ----
+  recomputeLimits();
+  applyCam();
+  setActive(0); updateChrome();
+  // gentle intro: start slightly zoomed out then settle
+  cam.k=fit()/slides[0].s*0.72;
+  cam.cy=slides[0].y-70;
+  applyCam();
+  setTimeout(function(){ focus(0, 1100); }, 260);
+})();
+</script>
+</body>
+</html>
