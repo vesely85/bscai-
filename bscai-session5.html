@@ -264,6 +264,32 @@
   .close .nextup b{color:#fff}
   .close .logo-tr{position:absolute;top:44px;right:52px;text-align:right}
 
+  /* ===== Door transition (act thresholds) ===== */
+  #doorov{position:fixed;inset:0;z-index:40;pointer-events:none;perspective:1500px;visibility:hidden}
+  #doorov.show{visibility:visible}
+  #doorov .dbg{position:absolute;inset:0;background:rgba(4,20,19,.5);opacity:0;transition:opacity .4s}
+  #doorov.show .dbg{opacity:1}
+  #doorov.open .dbg{opacity:0;transition:opacity .8s .2s}
+  #doorov .panel{position:absolute;top:0;bottom:0;width:50.5%;overflow:hidden;backface-visibility:hidden;
+    background:linear-gradient(105deg,#0B6B69 0%,#17A2A0 55%,#128885 100%);
+    background-image:repeating-linear-gradient(90deg,transparent 0 128px,rgba(255,255,255,.05) 128px 133px),linear-gradient(105deg,#0B6B69 0%,#17A2A0 55%,#128885 100%);
+    box-shadow:inset 0 0 0 6px rgba(255,255,255,.06), inset 0 0 90px rgba(0,0,0,.28);
+    transition:transform .42s cubic-bezier(.5,0,.4,1);will-change:transform}
+  #doorov .pl{left:0;transform-origin:left center;transform:translateX(-101%)}
+  #doorov .pr{right:0;transform-origin:right center;transform:translateX(101%)}
+  #doorov.show .pl,#doorov.show .pr{transform:translateX(0)}
+  #doorov.open .pl{transform:translateX(0) rotateY(108deg);transition:transform .95s cubic-bezier(.55,0,.3,1)}
+  #doorov.open .pr{transform:translateX(0) rotateY(-108deg);transition:transform .95s cubic-bezier(.55,0,.3,1)}
+  #doorov .emblem{position:absolute;top:50%;width:320px;height:320px}
+  #doorov .pl .emblem{right:-160px;transform:translateY(-50%)}
+  #doorov .pr .emblem{left:-160px;transform:translateY(-50%)}
+  #doorov .handle{position:absolute;top:50%;transform:translateY(-50%);width:12px;height:132px;border-radius:7px;background:#EA7A2A;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+  #doorov .pl .handle{right:34px}
+  #doorov .pr .handle{left:34px}
+  #doorov .lintel{position:absolute;top:9%;width:100%;text-align:center;color:rgba(255,255,255,.85);font-weight:800;letter-spacing:5px;font-size:15px;text-transform:uppercase}
+  #doorov .pl .lintel{right:-330px;width:660px}
+  #doorov .pr .lintel{left:-330px;width:660px}
+
   /* ===== Chrome / UI ===== */
   .ui{position:fixed;z-index:50;font-family:var(--font-body);color:#fff;user-select:none}
   #topbar{top:0;left:0;right:0;height:4px;background:rgba(255,255,255,.10)}
@@ -342,14 +368,14 @@
     </section>
 
     <!-- ============ SLIDE 2 — QUESTION ============ -->
-    <section class="slide quote" data-x="1900" data-y="0" data-s="1">
+    <section class="slide quote" data-x="1900" data-y="-85" data-s="1">
       <div class="qmark rvs" style="--d:60">“</div>
       <h2 class="rv" style="--d:160">Who cleaned what, when —<br>and to what standard?</h2>
       <p class="rv" style="--d:360">Your customers are already asking. A monthly QA report is no longer the answer.</p>
     </section>
 
     <!-- ============ SLIDE 3 — WHERE IT'S HEADING ============ -->
-    <section class="slide" data-x="3800" data-y="0" data-s="1">
+    <section class="slide" data-x="3800" data-y="70" data-s="1">
       <div class="pad">
         <h2 class="title-lg rv">Where service validation is heading</h2>
         <div class="cols3">
@@ -377,7 +403,7 @@
     </section>
 
     <!-- ============ SLIDE 4 — WHY PAPER STOPPED WINNING ============ -->
-    <section class="slide" data-x="5700" data-y="0" data-s="1">
+    <section class="slide" data-x="5700" data-y="-60" data-s="1">
       <div class="pad">
         <h2 class="title-lg rv">Why paper stopped winning</h2>
         <div class="cmp">
@@ -603,7 +629,7 @@
     </section>
 
     <!-- ============ SLIDE 10 — PROOF: PLANT ============ -->
-    <section class="slide proof p10" data-x="10600" data-y="0" data-s="1">
+    <section class="slide proof p10" data-x="10600" data-y="75" data-s="1">
       <div class="pad" style="padding-bottom:0">
         <h2 class="title-lg rv">Proof: one app, whole workforce</h2>
       </div>
@@ -622,7 +648,7 @@
     </section>
 
     <!-- ============ SLIDE 11 — PROOF: AIRPORT ============ -->
-    <section class="slide proof p11" data-x="12500" data-y="0" data-s="1" style="background:var(--teal)">
+    <section class="slide proof p11" data-x="12500" data-y="-70" data-s="1" style="background:var(--teal)">
       <div class="pad" style="padding-bottom:0">
         <h2 class="title-lg rv" style="color:#fff">Proof: cleaning that answers to flights</h2>
       </div>
@@ -641,7 +667,7 @@
     </section>
 
     <!-- ============ SLIDE 12 — NEXT: RECORDING TO REASONING ============ -->
-    <section class="slide" data-x="14400" data-y="0" data-s="1">
+    <section class="slide" data-x="14400" data-y="55" data-s="1">
       <div class="pad">
         <h2 class="title-lg rv">Next: from recording to reasoning</h2>
         <div class="next3">
@@ -694,6 +720,19 @@
 </div>
 
 <!-- ===== UI CHROME ===== -->
+<div id="doorov" aria-hidden="true">
+  <div class="dbg"></div>
+  <div class="panel pl">
+    <div class="lintel"></div>
+    <svg class="emblem" viewBox="0 0 100 100" aria-hidden="true"><path d="M50 12 L92 44 L76 44 L50 24 L24 44 L8 44 Z" fill="#EA7A2A"/><rect x="22" y="46" width="14" height="40" fill="#ffffff"/><rect x="43" y="46" width="14" height="40" fill="#0C2A4C"/><rect x="64" y="46" width="14" height="40" fill="#ffffff"/></svg>
+    <span class="handle"></span>
+  </div>
+  <div class="panel pr">
+    <div class="lintel"></div>
+    <svg class="emblem" viewBox="0 0 100 100" aria-hidden="true"><path d="M50 12 L92 44 L76 44 L50 24 L24 44 L8 44 Z" fill="#EA7A2A"/><rect x="22" y="46" width="14" height="40" fill="#ffffff"/><rect x="43" y="46" width="14" height="40" fill="#0C2A4C"/><rect x="64" y="46" width="14" height="40" fill="#ffffff"/></svg>
+    <span class="handle"></span>
+  </div>
+</div>
 <div id="topbar" class="ui"><div id="progress"></div></div>
 
 <div id="brandtag" class="ui">
@@ -752,11 +791,12 @@
     svg.setAttribute('viewBox','0 0 '+W+' '+H);
     svg.setAttribute('width',W); svg.setAttribute('height',H);
     svg.style.cssText='position:absolute;left:'+minX+'px;top:'+TOP+'px;pointer-events:none';
-    var d='M '+(pts[0].x-minX)+' '+(0-TOP), dots='';
+    var d='M '+(pts[0].x-minX)+' '+(pts[0].y-TOP), dots='';
     for(var i=1;i<pts.length;i++){
-      var x0=pts[i-1].x-minX, x1=pts[i].x-minX, mx=(x0+x1)/2;
-      d+=' Q '+mx+' '+(-150-TOP)+' '+x1+' '+(0-TOP);
-      dots+='<circle cx="'+mx+'" cy="'+(-75-TOP)+'" r="9" fill="#EA7A2A" opacity="0.9"/>';
+      var x0=pts[i-1].x-minX, y0=pts[i-1].y-TOP, x1=pts[i].x-minX, y1=pts[i].y-TOP;
+      var mx=(x0+x1)/2, my=(y0+y1)/2-150;
+      d+=' Q '+mx+' '+my+' '+x1+' '+y1;
+      dots+='<circle cx="'+((x0+x1)/2)+'" cy="'+(0.25*y0+0.5*my+0.25*y1)+'" r="9" fill="#EA7A2A" opacity="0.9"/>';
     }
     svg.innerHTML='<path d="'+d+'" fill="none" stroke="#17A2A0" stroke-width="6" stroke-dasharray="20 16" opacity="0.42" stroke-linecap="round"/>'+dots;
     world.insertBefore(svg, world.firstChild);
@@ -782,7 +822,9 @@
     var travel=Math.hypot(target.cx-from.cx, target.cy-from.cy);
     var avgScreen=(from.k+target.k)/2;
     var screenTravel=travel*avgScreen;
-    var dip=Math.min(0.55, screenTravel/(Math.max(vw,vh)*2.2)); // 0..0.55
+    var dip=Math.min(0.30, screenTravel/(Math.max(vw,vh)*3.5)); // gentler breathe
+    var zoomTerm=Math.min(500, Math.abs(Math.log((target.k||1)/(from.k||1)))*420);
+    var auto=Math.max(700, Math.min(1650, 620 + screenTravel*0.16 + zoomTerm));
     // arc the flight along a quadratic bezier (upward bias to match the journey line)
     var mx=(from.cx+target.cx)/2, my=(from.cy+target.cy)/2;
     var dxx=target.cx-from.cx, dyy=target.cy-from.cy;
@@ -792,7 +834,7 @@
       var amt=Math.min(travel*0.25,230);
       mx+=nx*amt; my+=ny*amt;
     }
-    tween={from:from, to:target, t0:now(), dur:dur||900, dip:dip, ctrl:{cx:mx,cy:my}};
+    tween={from:from, to:target, t0:now(), dur:dur||auto, dip:dip, ctrl:{cx:mx,cy:my}};
     world.style.willChange='transform';
     if(!rafOn){ rafOn=true; requestAnimationFrame(loop); }
   }
@@ -830,6 +872,35 @@
     var s=slides[i];
     startTween({cx:s.x, cy:s.y, k:fit()/s.s}, dur);
     updateChrome();
+  }
+
+  // Door moments: forward advances that cross an act threshold pass "through the door"
+  var DOORS={'0-1':'The Customer Question','3-4':'The Four-Pillar Framework','10-11':'From Recording to Reasoning'};
+  var doorBusy=false;
+  var doorov=document.getElementById('doorov');
+  function doorTransition(i, label){
+    if(doorBusy) return;
+    doorBusy=true;
+    doorov.querySelectorAll('.lintel').forEach(function(el){ el.textContent=label||''; });
+    doorov.classList.remove('open');
+    doorov.classList.add('show');                       // doors slide shut over the current view
+    setTimeout(function(){
+      var s=slides[i];                                  // teleport while covered
+      if(overview){ overview=false; document.body.classList.remove('overview'); }
+      current=i; setActive(i); updateChrome();
+      tween=null; cam.cx=s.x; cam.cy=s.y; cam.k=fit()/s.s*0.96; applyCam();
+      doorov.classList.add('open');                     // doors swing open onto the new act
+      startTween({cx:s.x, cy:s.y, k:fit()/s.s}, 1000);  // gentle push through the threshold
+      setTimeout(function(){
+        doorov.classList.remove('show'); doorov.classList.remove('open'); doorBusy=false;
+      }, 1050);
+    }, 440);
+  }
+  function goNext(){
+    var j=current+1;
+    if(j>=slides.length) return;
+    var key=current+'-'+j;
+    if(DOORS[key]){ doorTransition(j, DOORS[key]); } else { focus(j); }
   }
 
   var activeIdx=-1;
@@ -970,7 +1041,7 @@
   // ---- Keyboard ----
   window.addEventListener('keydown', function(e){
     switch(e.key){
-      case 'ArrowRight': case 'PageDown': case ' ': e.preventDefault(); focus(current+1); hideHint(); break;
+      case 'ArrowRight': case 'PageDown': case ' ': e.preventDefault(); goNext(); hideHint(); break;
       case 'ArrowLeft': case 'PageUp': e.preventDefault(); focus(current-1); hideHint(); break;
       case 'Home': focus(0); break;
       case 'End': focus(slides.length-1); break;
@@ -985,7 +1056,7 @@
   });
 
   // ---- Buttons ----
-  document.getElementById('btnNext').onclick=function(){focus(current+1);hideHint();};
+  document.getElementById('btnNext').onclick=function(){goNext();hideHint();};
   document.getElementById('btnPrev').onclick=function(){focus(current-1);hideHint();};
   document.getElementById('btnFirst').onclick=function(){focus(0);};
   document.getElementById('btnOverview').onclick=toggleOverview;
