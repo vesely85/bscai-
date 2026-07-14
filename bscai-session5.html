@@ -159,6 +159,42 @@
   .pillar .phone .pwr{position:absolute;left:-3px;top:104px;width:3px;height:30px;background:#0e1622;border-radius:2px}
   .pillar .appcap{font-size:15px;line-height:1.35;color:var(--ink-soft);text-align:center;max-width:320px;font-weight:600}
   .pillar .appcap b{color:var(--navy);font-weight:800}
+  /* slide 7 — HTML app screen rendered in Spanish, scaled to fit the phone */
+  .phone.appphone .screen{width:148px;height:322px}
+  .appscreen{position:relative;width:375px;height:816px;transform:scale(.39467);transform-origin:top left;background:#f3f4f6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1c1c1e;overflow:hidden}
+  .appscreen .stbar{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 22px 0 26px;font-size:16px}
+  .appscreen .stbar .tl{display:flex;align-items:center;gap:7px;font-weight:700}
+  .appscreen .stbar .ir{display:flex;align-items:center;gap:6px}
+  .appscreen .bat{position:relative;width:24px;height:12px;border:1.4px solid rgba(0,0,0,.4);border-radius:3px;display:flex;align-items:center;padding:1.4px}
+  .appscreen .bat::after{content:"";position:absolute;right:-3px;top:3.5px;width:2px;height:5px;background:rgba(0,0,0,.4);border-radius:1px}
+  .appscreen .bat i{height:100%;width:49%;background:#111;border-radius:1px}
+  .appscreen .bat b{position:absolute;left:3px;top:-0.5px;font-size:8.5px;font-weight:800}
+  .appscreen .apphead{height:52px;display:flex;align-items:center;gap:10px;padding:0 16px;background:#fff}
+  .appscreen .apphead .bk{font-size:23px;line-height:1}
+  .appscreen .apphead .htxt{font-weight:800;font-size:19px;flex:1;text-align:center;margin-left:-14px}
+  .appscreen .apphead .info{width:22px;height:22px;border-radius:50%;background:#5b5b60;color:#fff;font-size:13px;font-style:italic;font-weight:800;display:flex;align-items:center;justify-content:center}
+  .appscreen .applist{padding:12px 14px 0;display:flex;flex-direction:column;gap:13px}
+  .appscreen .loccard{background:#fff;border:1px solid #ededed;border-radius:14px;box-shadow:0 1px 3px rgba(0,0,0,.05);padding:15px 15px}
+  .appscreen .lc-row{display:flex;align-items:center;gap:12px}
+  .appscreen .sdot{width:20px;height:20px;border-radius:50%;background:#48484a;flex:0 0 auto}
+  .appscreen .lc-main{flex:1;min-width:0}
+  .appscreen .lc-name{font-weight:800;font-size:15.5px;line-height:1.15}
+  .appscreen .lc-sub{font-style:italic;color:#8a8a8e;font-size:12.5px;margin-top:2px}
+  .appscreen .gdot{width:15px;height:15px;border-radius:50%;background:#c6c6cb;flex:0 0 auto}
+  .appscreen .chev{width:16px;height:16px;color:#3a3a3c;flex:0 0 auto}
+  .appscreen .exp{margin-top:12px}
+  .appscreen .exp .rowbtw{display:flex;align-items:center;justify-content:space-between}
+  .appscreen .exp .h{font-weight:800;font-size:18px}
+  .appscreen .exp .docs{display:flex;gap:9px;color:#2F6FED}
+  .appscreen .exp .muted{color:#4a4a4e;font-size:13.5px;margin:8px 0 2px}
+  .appscreen .divider{height:1px;background:#ececec;margin:13px 0}
+  .appscreen .btns{display:flex;gap:11px}
+  .appscreen .abtn{flex:1;border:1.5px solid #bcd2ff;border-radius:10px;color:#2F6FED;font-weight:700;font-size:14px;padding:11px 6px;display:flex;align-items:center;justify-content:center;gap:7px;line-height:1.12;text-align:center}
+  .appscreen .abtn svg{width:19px;height:19px;flex:0 0 auto}
+  .appscreen .tabbar{position:absolute;left:0;right:0;bottom:0;height:62px;background:#fff;border-top:1px solid #ececec;display:flex;align-items:center;justify-content:space-around;padding-bottom:5px}
+  .appscreen .tab{display:flex;flex-direction:column;align-items:center;gap:3px;color:#9a9a9f;font-size:11.5px;font-weight:600}
+  .appscreen .tab.on{color:#2F6FED}
+  .appscreen .tab svg{width:22px;height:22px}
 
   /* proof slides (10-11) */
   .proof .story{position:absolute;left:70px;top:150px;bottom:150px;width:640px;border-radius:18px;padding:34px 36px}
@@ -393,7 +429,7 @@
     </section>
 
     <!-- ============ SLIDE 7 — PILLAR 2 ============ -->
-    <section class="slide pillar" data-x="8500" data-y="780" data-s="0.34">
+    <section class="slide pillar hasapp" data-x="8500" data-y="780" data-s="0.34">
       <div class="pad">
         <div class="ptitle rv"><div class="pbadge">2</div><h2>UI ease</h2></div>
         <div class="peyebrow rv" style="--d:80">Crews actually use it.</div>
@@ -409,9 +445,59 @@
               <li class="rv" style="--d:410">Minimal training to first completed route</li>
             </ul>
           </div>
-          <div class="field rvs" style="--d:260">
-            <div class="lab">From the field</div>
-            <p>Crews with minimal formal training hit 100% route completion on Day 1 of go-live — because validation lived inside the app they already clocked in with.<span class="em">Adoption by default, not by mandate.</span></p>
+          <div class="appstage rvs" style="--d:260">
+            <div class="phone appphone">
+              <span class="notch"></span><span class="side"></span><span class="pwr"></span>
+              <div class="screen">
+                <div class="appscreen">
+                  <div class="stbar">
+                    <span class="tl">10:03
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="#111"><path d="M22 2 2 10.5l7.6 2.9L12.5 21 22 2z"/></svg>
+                    </span>
+                    <span class="ir">
+                      <svg width="18" height="12" viewBox="0 0 18 12" fill="#111"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="2.5" width="3" height="9.5" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#bcbcc2"/></svg>
+                      <svg width="17" height="12" viewBox="0 0 17 12" fill="none" stroke="#111" stroke-width="1.5"><path d="M1 4.1C4.5 1 12.5 1 16 4.1"/><path d="M3.4 6.5C6 4.2 11 4.2 13.6 6.5"/><path d="M5.9 8.9C7.4 7.6 9.6 7.6 11.1 8.9"/><circle cx="8.5" cy="10.7" r="0.8" fill="#111" stroke="none"/></svg>
+                      <span class="bat"><b>49</b><i></i></span>
+                    </span>
+                  </div>
+                  <div class="apphead">
+                    <span class="bk">&#8592;</span>
+                    <span class="htxt">Validación de Servicio</span>
+                    <span class="info">i</span>
+                  </div>
+                  <div class="applist">
+                    <div class="loccard"><div class="lc-row"><span class="sdot"></span><div class="lc-main"><div class="lc-name">Sala de Capacitación</div><div class="lc-sub">Sala de Conferencias</div></div><span class="gdot"></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div></div>
+                    <div class="loccard"><div class="lc-row"><span class="sdot"></span><div class="lc-main"><div class="lc-name">Baño de Hombres · RR. HH.</div><div class="lc-sub">Baño</div></div><span class="gdot"></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div></div>
+                    <div class="loccard"><div class="lc-row"><span class="sdot"></span><div class="lc-main"><div class="lc-name">Baño de Mujeres · RR. HH.</div><div class="lc-sub">Baño</div></div><span class="gdot"></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div></div>
+                    <div class="loccard open">
+                      <div class="lc-row"><span class="sdot"></span><div class="lc-main"><div class="lc-name">Sala de Descanso · Muelle</div><div class="lc-sub">Sala de Descanso</div></div><span class="gdot"></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg></div>
+                      <div class="exp">
+                        <div class="rowbtw"><span class="h">Tickets Abiertos</span><span class="docs">
+                          <svg width="17" height="20" viewBox="0 0 17 20" fill="none" stroke="#4a4a4e" stroke-width="1.5"><path d="M2 1h9l4 4v14H2z"/><path d="M11 1v4h4"/></svg>
+                          <svg width="17" height="20" viewBox="0 0 17 20" fill="none" stroke="#2F6FED" stroke-width="1.5"><path d="M2 1h9l4 4v14H2z"/><path d="M11 1v4h4"/><text x="8.5" y="15" font-size="5.4" fill="#2F6FED" text-anchor="middle" font-weight="700" stroke="none">PDF</text></svg>
+                        </span></div>
+                        <div class="muted">Sin tickets abiertos</div>
+                        <div class="rowbtw" style="margin-top:12px"><span class="h">Registros de Servicio</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="#3a3a3c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div>
+                        <div class="divider"></div>
+                        <div class="btns">
+                          <span class="abtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 8a2 2 0 0 0 0 4v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3a2 2 0 0 1 0-4V6a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1z"/></svg>Crear Tickets</span>
+                          <span class="abtn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3.2 22.5 21H1.5L12 3.2z"/><rect x="11" y="9.5" width="2" height="5.5" fill="#fff"/><rect x="11" y="16.5" width="2" height="2" rx="1" fill="#fff"/></svg>Reportar Problema</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="loccard"><div class="lc-row"><span class="sdot"></span><div class="lc-main"><div class="lc-name">Muelle</div><div class="lc-sub">Piso de Almacén</div></div><span class="gdot"></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div></div>
+                  </div>
+                  <div class="tabbar">
+                    <span class="tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Marcar</span>
+                    <span class="tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 1.5"/></svg>Tarjeta</span>
+                    <span class="tab on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>Trabajo</span>
+                    <span class="tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M16 12h3"/></svg>Billetera</span>
+                    <span class="tab"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>Más</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="appcap"><b>En el idioma de la cuadrilla</b> — validación multilingüe dentro de la app que el equipo ya abre cada turno.</div>
           </div>
         </div>
       </div>
