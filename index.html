@@ -195,6 +195,21 @@
   .appscreen .tab{display:flex;flex-direction:column;align-items:center;gap:3px;color:#9a9a9f;font-size:11.5px;font-weight:600}
   .appscreen .tab.on{color:#2F6FED}
   .appscreen .tab svg{width:22px;height:22px}
+  /* slide 9 — unified connected systems hub diagram */
+  .hubstage{align-self:stretch;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:radial-gradient(120% 90% at 50% 18%, #e9f7f6 0%, #ffffff 74%);border-radius:20px;padding:14px 8px}
+  .hubwrap{position:relative;width:440px;height:340px}
+  .hubwrap svg.wires{position:absolute;inset:0;width:100%;height:100%}
+  .hubcore{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:108px;height:108px;border-radius:26px;background:linear-gradient(150deg,var(--navy) 0%,var(--teal-deep) 100%);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;box-shadow:0 16px 34px rgba(12,42,76,.32);z-index:2;text-align:center}
+  .hubcore svg{width:30px;height:30px}
+  .hubcore .t{font-weight:900;font-size:13.5px;line-height:1.15;letter-spacing:.2px}
+  .hnode{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:4px;width:112px;text-align:center;z-index:2}
+  .hnode .chip{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 8px 18px rgba(12,42,76,.18)}
+  .hnode .chip svg{width:22px;height:22px}
+  .hnode.c-teal .chip{background:var(--teal)}
+  .hnode.c-navy .chip{background:var(--navy)}
+  .hnode.c-orange .chip{background:var(--orange)}
+  .hnode .t{font-weight:800;font-size:13px;color:var(--navy);line-height:1.12}
+  .hnode .s{font-size:10.5px;color:var(--ink-soft);line-height:1.15}
 
   /* proof slides (10-11) */
   .proof .story{position:absolute;left:70px;top:150px;bottom:150px;width:640px;border-radius:18px;padding:34px 36px}
@@ -536,7 +551,7 @@
     </section>
 
     <!-- ============ SLIDE 9 — PILLAR 4 ============ -->
-    <section class="slide pillar" data-x="8500" data-y="1320" data-s="0.34">
+    <section class="slide pillar hasapp" data-x="8500" data-y="1320" data-s="0.34">
       <div class="pad">
         <div class="ptitle rv"><div class="pbadge">4</div><h2>System integration</h2></div>
         <div class="peyebrow rv" style="--d:80">Flows into the stack you already run.</div>
@@ -552,9 +567,26 @@
               <li class="rv" style="--d:410">Client ticketing systems in the loop</li>
             </ul>
           </div>
-          <div class="field rvs" style="--d:260">
-            <div class="lab">From the field</div>
-            <p>One app for the employee — clock in, see the route, validate the work. One data spine for the operator — every event tied to time, job cost and HR.<span class="em">The whole workforce operating system, one front door.</span></p>
+          <div class="hubstage rvs" style="--d:260">
+            <div class="hubwrap">
+              <svg class="wires" viewBox="0 0 440 340" aria-hidden="true">
+                <g stroke="#17A2A0" stroke-width="2" opacity="0.32"><line x1="220" y1="170" x2="220" y2="28"/><line x1="220" y1="170" x2="374" y2="66"/><line x1="220" y1="170" x2="406" y2="170"/><line x1="220" y1="170" x2="374" y2="274"/><line x1="220" y1="170" x2="220" y2="312"/><line x1="220" y1="170" x2="66" y2="274"/><line x1="220" y1="170" x2="34" y2="170"/><line x1="220" y1="170" x2="66" y2="66"/></g>
+                <g fill="#EA7A2A" opacity="0.85"><circle cx="220" cy="99" r="3"/><circle cx="297" cy="118" r="3"/><circle cx="313" cy="170" r="3"/><circle cx="297" cy="222" r="3"/><circle cx="220" cy="241" r="3"/><circle cx="143" cy="222" r="3"/><circle cx="127" cy="170" r="3"/><circle cx="143" cy="118" r="3"/></g>
+              </svg>
+              <div class="hnode c-teal" style="left:220px;top:28px"><span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.7 3.9 5.7 3.9 9S14.6 18.3 12 21c-2.6-2.7-3.9-5.7-3.9-9S9.4 5.7 12 3z"/></svg></span><span class="t">Market &amp; Sentiment</span><span class="s">global · social</span></div>
+              <div class="hnode c-navy" style="left:374px;top:66px"><span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="9" width="7" height="12"/><rect x="12" y="3" width="9" height="18"/><path d="M15 7h3M15 11h3M15 15h3M5.5 13h2M5.5 17h2"/></svg></span><span class="t">ERP System</span><span class="s">finance · inventory</span></div>
+              <div class="hnode c-orange" style="left:406px;top:170px"><span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M14.7 6.3a4.5 4.5 0 0 0-6 5.6L3 17.6V21h3.4l5.7-5.7a4.5 4.5 0 0 0 5.6-6L14.5 12l-2.5-2.5 2.7-3.2z"/></svg></span><span class="t">Work Orders</span><span class="s">schedules · tickets</span></div>
+              <div class="hnode c-navy" style="left:374px;top:274px"><span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="9" cy="8" r="3.4"/><path d="M2.5 20c.8-3.4 3.4-5.2 6.5-5.2S14.7 16.6 15.5 20"/><circle cx="17.5" cy="9.5" r="2.6"/><path d="M16 14.6c2.9.2 4.9 1.8 5.5 4.6"/></svg></span><span class="t">CRM</span><span class="s">sales · support</span></div>
+              <div class="hnode c-teal" style="left:220px;top:312px"><span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M2.5 9.5h19M6.5 14.5h4"/><circle cx="17" cy="14.5" r="1.6"/></svg></span><span class="t">Payroll &amp; HR</span><span class="s">time · wages</span></div>
+              <div class="hnode c-orange" style="left:66px;top:274px"><span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="8" cy="5.5" r="2.2"/><circle cx="16" cy="5.5" r="2.2"/><path d="M4.5 21v-5.5a3.5 3.5 0 0 1 7 0V21M12.5 21v-5.5a3.5 3.5 0 0 1 7 0V21"/></svg></span><span class="t">Building Traffic</span><span class="s">sensors · activity</span></div>
+              <div class="hnode c-teal" style="left:34px;top:170px"><span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="8" cy="9" r="3.4"/><path d="M8 2.8v1.6M2.8 9h1.6M4.3 5.3l1.1 1.1M11.7 5.3l-1.1 1.1"/><path d="M12 20h6.5a3.5 3.5 0 0 0 .6-6.9 5 5 0 0 0-9.4-1.6A3.8 3.8 0 0 0 12 20z"/></svg></span><span class="t">Weather</span><span class="s">forecast data</span></div>
+              <div class="hnode c-navy" style="left:66px;top:66px"><span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4.5 9.5C8.6 5.6 15.4 5.6 19.5 9.5M7.3 12.6c2.7-2.4 6.7-2.4 9.4 0"/><circle cx="12" cy="16.5" r="1.7" fill="currentColor" stroke="none"/><path d="M12 18.2V21"/></svg></span><span class="t">IoT Sensors</span><span class="s">dispensers · HVAC</span></div>
+              <div class="hubcore">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9"><rect x="8.5" y="2.5" width="7" height="12" rx="2"/><path d="M12 14.5V19"/><circle cx="12" cy="20.5" r="1.4" fill="#fff" stroke="none"/><path d="M5 8.5H2.5M21.5 8.5H19"/></svg>
+                <span class="t">One app.<br>One data spine.</span>
+              </div>
+            </div>
+            <div class="appcap"><b>Unified connected systems</b> — moving fast with best-in-class tools.</div>
           </div>
         </div>
       </div>
