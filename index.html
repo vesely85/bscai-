@@ -290,6 +290,25 @@
   #doorov .pl .lintel{right:-330px;width:660px}
   #doorov .pr .lintel{left:-330px;width:660px}
 
+  /* ===== Squeegee wipe (cleaner transition) ===== */
+  #squeegee{position:fixed;top:0;bottom:0;width:0;z-index:35;pointer-events:none;visibility:hidden}
+  #squeegee.show{visibility:visible}
+  #squeegee .blade{position:absolute;left:-8px;top:-2%;height:104%;width:16px;border-radius:8px;
+    background:linear-gradient(90deg,#0C2A4C 0%,#1d4570 45%,#0C2A4C 100%);
+    box-shadow:0 0 22px rgba(0,0,0,.45), inset 0 0 0 1.5px rgba(255,255,255,.14)}
+  #squeegee .grip{position:absolute;left:6px;top:50%;width:120px;height:15px;border-radius:9px;
+    background:linear-gradient(90deg,#EA7A2A,#D2631A);transform:translateY(-50%) rotate(-26deg);transform-origin:left center;
+    box-shadow:0 4px 12px rgba(0,0,0,.3)}
+  #squeegee .grip::after{content:"";position:absolute;right:-14px;top:50%;transform:translateY(-50%);width:30px;height:30px;border-radius:50%;background:#D2631A;box-shadow:inset 0 0 0 5px rgba(255,255,255,.16)}
+  #squeegee .sheen{position:absolute;left:-190px;top:0;bottom:0;width:180px;
+    background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.10) 35%,rgba(159,232,229,.28) 78%,rgba(255,255,255,.42) 100%)}
+  #squeegee .drips{position:absolute;left:-60px;top:0;bottom:0;width:50px;
+    background-image:radial-gradient(circle,rgba(255,255,255,.35) 2.5px,transparent 3px),radial-gradient(circle,rgba(255,255,255,.22) 2px,transparent 2.6px);
+    background-size:22px 140px,30px 90px;background-position:0 30px,12px 0}
+  #squeegee.rev .grip{left:auto;right:6px;transform:translateY(-50%) rotate(26deg) scaleX(-1);transform-origin:right center}
+  #squeegee.rev .sheen{left:auto;right:-190px;transform:scaleX(-1)}
+  #squeegee.rev .drips{left:auto;right:-60px}
+
   /* ===== Chrome / UI ===== */
   .ui{position:fixed;z-index:50;font-family:var(--font-body);color:#fff;user-select:none}
   #topbar{top:0;left:0;right:0;height:4px;background:rgba(255,255,255,.10)}
@@ -733,6 +752,8 @@
     <span class="handle"></span>
   </div>
 </div>
+<div id="squeegee" aria-hidden="true"><div class="sheen"></div><div class="drips"></div><div class="blade"></div><div class="grip"></div></div>
+
 <div id="topbar" class="ui"><div id="progress"></div></div>
 
 <div id="brandtag" class="ui">
@@ -896,11 +917,52 @@
       }, 1050);
     }, 440);
   }
+  // Squeegee wipes: top-level advances sweep the old view away like a cleaner's blade.
+  // Zoom flights remain only inside the framework (dive into a card, pan between pillars).
+  var WIPES={'1-2':1,'2-3':1,'8-9':1,'9-10':1,'11-12':1,
+             '2-1':1,'3-2':1,'9-8':1,'10-9':1,'12-11':1,'1-0':1,'4-3':1,'11-10':1};
+  var wipeBusy=false;
+  var sq=document.getElementById('squeegee');
+  function wipeTransition(i, dir){
+    if(wipeBusy||doorBusy) return;
+    wipeBusy=true;
+    var s=slides[i];
+    var old=world.cloneNode(true);                    // freeze the outgoing view
+    old.removeAttribute('id');
+    old.style.pointerEvents='none';
+    old.style.zIndex=30;
+    old.style.willChange='auto';
+    viewport.appendChild(old);
+    tween=null;
+    if(overview){ overview=false; document.body.classList.remove('overview'); }
+    current=i; setActive(i); updateChrome();
+    cam.cx=s.x; cam.cy=s.y; cam.k=fit()/s.s; applyCam();   // real world snaps to the new stop underneath
+    sq.classList.toggle('rev', dir<0);
+    sq.classList.add('show');
+    var t0=now(), DUR=880;
+    (function step(){
+      var e=Math.min(1,(now()-t0)/DUR);
+      var te=easeInOut(e), pct=te*100;
+      if(dir>0){ old.style.clipPath='inset(0 0 0 '+pct+'%)'; sq.style.left=(pct/100*vw)+'px'; }
+      else     { old.style.clipPath='inset(0 '+pct+'% 0 0)'; sq.style.left=((100-pct)/100*vw)+'px'; }
+      if(e<1){ requestAnimationFrame(step); }
+      else{ viewport.removeChild(old); sq.classList.remove('show'); wipeBusy=false; }
+    })();
+  }
   function goNext(){
     var j=current+1;
     if(j>=slides.length) return;
     var key=current+'-'+j;
-    if(DOORS[key]){ doorTransition(j, DOORS[key]); } else { focus(j); }
+    if(DOORS[key]){ doorTransition(j, DOORS[key]); }
+    else if(WIPES[key]){ wipeTransition(j, 1); }
+    else { focus(j); }
+  }
+  function goPrev(){
+    var j=current-1;
+    if(j<0) return;
+    var key=current+'-'+j;
+    if(WIPES[key]){ wipeTransition(j, -1); }
+    else { focus(j); }
   }
 
   var activeIdx=-1;
@@ -1042,7 +1104,7 @@
   window.addEventListener('keydown', function(e){
     switch(e.key){
       case 'ArrowRight': case 'PageDown': case ' ': e.preventDefault(); goNext(); hideHint(); break;
-      case 'ArrowLeft': case 'PageUp': e.preventDefault(); focus(current-1); hideHint(); break;
+      case 'ArrowLeft': case 'PageUp': e.preventDefault(); goPrev(); hideHint(); break;
       case 'Home': focus(0); break;
       case 'End': focus(slides.length-1); break;
       case 'o': case 'O': toggleOverview(); break;
@@ -1057,7 +1119,7 @@
 
   // ---- Buttons ----
   document.getElementById('btnNext').onclick=function(){goNext();hideHint();};
-  document.getElementById('btnPrev').onclick=function(){focus(current-1);hideHint();};
+  document.getElementById('btnPrev').onclick=function(){goPrev();hideHint();};
   document.getElementById('btnFirst').onclick=function(){focus(0);};
   document.getElementById('btnOverview').onclick=toggleOverview;
   document.getElementById('btnZoomIn').onclick=function(){zoomAt(vw/2,vh/2,1.3);};
