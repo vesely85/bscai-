@@ -88,6 +88,31 @@
   .cover .whitecut2{position:absolute;top:0;right:0;width:520px;height:300px;background:#fff;clip-path:polygon(100% 0,100% 100%,0 0)}
   .cover .logo-tr{position:absolute;top:44px;right:52px;text-align:right;z-index:4}
   .cover h1{position:absolute;left:70px;top:200px;width:760px;color:#fff;font-family:var(--font-head);font-weight:900;font-size:56px;line-height:1.05;letter-spacing:-1px;z-index:3}
+  .cover .presenter{position:absolute;left:72px;top:462px;display:flex;align-items:center;gap:16px;z-index:3}
+  .cover .presenter .fchip{background:#fff;color:#1F4E79;font-family:var(--font-head);font-weight:900;font-size:24px;padding:7px 16px;border-radius:10px;box-shadow:0 8px 20px rgba(0,0,0,.18)}
+  .cover .presenter .fchip i{font-style:normal;color:#EA7A2A}
+  .cover .presenter .who{color:#fff;font-size:21px;font-weight:800;line-height:1.2}
+  .cover .presenter .who span{display:block;font-size:16px;color:#c9f2f0;font-weight:600}
+
+  /* ===== Slide 14 — Findd ===== */
+  .findd{background:linear-gradient(150deg,#16334F 0%,#1F4E79 55%,#173E63 100%);color:#fff}
+  .findd .fd-glow{position:absolute;right:-200px;top:-200px;width:640px;height:640px;border-radius:50%;background:radial-gradient(circle,rgba(37,99,235,.45),transparent 70%)}
+  .findd .fd-glow2{position:absolute;left:-160px;bottom:-260px;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(94,160,255,.18),transparent 70%)}
+  .findd .fd-wordmark{position:absolute;left:70px;top:52px;font-family:var(--font-head);font-weight:900;font-size:46px;letter-spacing:-1px}
+  .findd .fd-wordmark i{font-style:normal;color:#EA7A2A}
+  .findd h2{position:absolute;left:70px;top:168px;width:700px;font-family:var(--font-head);font-weight:900;font-size:58px;line-height:1.05;letter-spacing:-1px}
+  .findd .fd-sub{position:absolute;left:70px;top:322px;width:620px;font-size:21px;line-height:1.52;color:#cfe0f4}
+  .findd .fd-sub b{color:#fff}
+  .findd .fd-stat{position:absolute;right:70px;top:168px;width:400px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:18px;padding:32px 34px}
+  .findd .fd-stat .n{font-family:var(--font-head);font-weight:900;font-size:62px;line-height:1;color:#7db4ff}
+  .findd .fd-stat .c{font-size:19px;line-height:1.45;color:#c6d9f2;margin-top:12px}
+  .findd .fd-cta{position:absolute;left:70px;bottom:142px;display:flex;gap:16px}
+  .findd .fd-cta .btn{display:inline-flex;align-items:center;gap:10px;padding:15px 28px;border-radius:12px;font-weight:800;font-size:20px;text-decoration:none;transition:transform .15s}
+  .findd .fd-cta .btn:hover{transform:translateY(-2px)}
+  .findd .fd-cta .btn.solid{background:#2563EB;color:#fff;box-shadow:0 12px 28px rgba(37,99,235,.42)}
+  .findd .fd-cta .btn.ghost{border:2px solid rgba(255,255,255,.42);color:#fff}
+  .findd .fd-presenter{position:absolute;left:70px;bottom:84px;color:#9fbde0;font-size:17px;font-weight:600}
+  .findd .fd-presenter b{color:#dcebff}
   .cover .subttl{position:absolute;left:0;right:0;bottom:112px;text-align:center;color:#eafffe;font-style:italic;font-weight:700;font-size:22px;letter-spacing:.3px;z-index:3}
 
   /* ===== Slide 2 — Question ===== */
@@ -395,6 +420,10 @@
         <div style="font-size:12px;font-weight:800;letter-spacing:1px;color:#123863;margin-top:2px">BUILDING SERVICE CONTRACTORS<br>ASSOCIATION INTERNATIONAL</div>
       </div>
       <h1 class="rv" style="--d:220">Service Delivery in Motion:<br>Real-Time Work Validation<br>Driven by Customers</h1>
+      <div class="presenter rv" style="--d:360">
+        <span class="fchip">Findd<i>.</i></span>
+        <div class="who">Josh Vesely<span>Customer Executive · Findd</span></div>
+      </div>
       <div class="subttl rv" style="--d:420">BSCAI Virtual Technology Summit 2026 — Session 5 · July 16</div>
     </section>
 
@@ -747,6 +776,24 @@
       <div class="oc"></div>
     </section>
 
+    <!-- ============ SLIDE 14 — FINDD ============ -->
+    <section class="slide findd" data-x="18200" data-y="0" data-s="1">
+      <div class="fd-glow"></div>
+      <div class="fd-glow2"></div>
+      <div class="fd-wordmark rvs">Findd<i>.</i></div>
+      <h2 class="rv" style="--d:140">Tech built for the frontline.</h2>
+      <p class="fd-sub rv" style="--d:260">Findd is the workforce operating system behind everything you just saw — identity, time, job costing and service validation in <b>one app, one data spine</b>. Our team builds for the people who do the work.</p>
+      <div class="fd-stat rvs" style="--d:380">
+        <div class="n">100,000+</div>
+        <div class="c">frontline workers supported by the Findd platform, every shift</div>
+      </div>
+      <div class="fd-cta rv" style="--d:500">
+        <a class="btn solid" href="https://findd.io" target="_blank" rel="noopener">Visit findd.io</a>
+        <a class="btn ghost" href="mailto:Josh@findd.io">Josh@findd.io</a>
+      </div>
+      <div class="fd-presenter rv" style="--d:600"><b>Josh Vesely</b> · Customer Executive · Let's talk about your validation roadmap.</div>
+    </section>
+
   </div>
 </div>
 
@@ -781,7 +828,7 @@
 <div id="dock" class="ui">
   <button id="btnFirst" title="First (Home)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6l-8 6 8 6"/><path d="M8 6v12"/></svg></button>
   <button id="btnPrev" title="Previous (←)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
-  <div id="counter"><b>01</b> <span>/ 13</span></div>
+  <div id="counter"><b>01</b> <span>/ 14</span></div>
   <button id="btnNext" title="Next (→ / Space)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>
   <div class="divider"></div>
   <button id="btnZoomOut" title="Zoom out (−)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4M8 11h6"/></svg></button>
@@ -816,7 +863,7 @@
 
   // journey line: teal arcing path through the top-level story stops, drawn under the slides
   (function(){
-    var MAIN=[0,1,2,3,4,9,10,11,12].filter(function(i){return i<slides.length;});
+    var MAIN=[0,1,2,3,4,9,10,11,12,13].filter(function(i){return i<slides.length;});
     var pts=MAIN.map(function(i){return slides[i];});
     var minX=Math.min.apply(null,pts.map(function(s){return s.x;}))-800;
     var maxX=Math.max.apply(null,pts.map(function(s){return s.x;}))+800;
@@ -932,7 +979,7 @@
   }
   // Squeegee wipes: top-level advances sweep the old view away like a cleaner's blade.
   // Zoom flights remain only inside the framework (dive into a card, pan between pillars).
-  var WIPES={'1-2':1,'2-3':1,'8-9':1,'9-10':1,'11-12':1,
+  var WIPES={'1-2':1,'2-3':1,'8-9':1,'9-10':1,'11-12':1,'12-13':1,'13-12':1,
              '2-1':1,'3-2':1,'9-8':1,'10-9':1,'12-11':1,'1-0':1,'4-3':1,'11-10':1};
   var wipeBusy=false;
   var sq=document.getElementById('squeegee');
@@ -1005,7 +1052,7 @@
 
   function updateChrome(){
     var n=current+1;
-    document.getElementById('counter').innerHTML='<b>'+(n<10?'0'+n:n)+'</b> <span>/ 13</span>';
+    document.getElementById('counter').innerHTML='<b>'+(n<10?'0'+n:n)+'</b> <span>/ 14</span>';
     document.getElementById('progress').style.width=(current/(slides.length-1)*100)+'%';
     var dd=document.querySelectorAll('#dots i');
     for(var j=0;j<dd.length;j++){ dd[j].classList.toggle('on', j===current); }
