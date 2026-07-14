@@ -30,7 +30,11 @@
   /* ===== Camera / stage ===== */
   #viewport{position:fixed;inset:0;overflow:hidden;background:
      radial-gradient(120% 120% at 50% 20%, #0d3b39 0%, #082523 55%, #041413 100%);}
-  #world{position:absolute;top:0;left:0;transform-origin:0 0;will-change:transform}
+  #world{position:absolute;top:0;left:0;transform-origin:0 0}
+  #stars{position:absolute;inset:-50%;pointer-events:none;
+    background-image:radial-gradient(circle,rgba(255,255,255,.12) 1.5px,transparent 2px),
+      radial-gradient(circle,rgba(23,162,160,.25) 2.5px,transparent 3px);
+    background-size:110px 110px,300px 300px;will-change:background-position}
 
   /* ===== Slide shell ===== */
   .slide{
@@ -50,6 +54,8 @@
   .rvs{opacity:0;transform:scale(.82);transition:opacity .7s cubic-bezier(.2,.8,.2,1),transform .7s cubic-bezier(.2,.8,.2,1);transition-delay:calc(var(--d,0)*1ms)}
   .slide.is-active .rv{opacity:1;transform:translateY(0)}
   .slide.is-active .rvs{opacity:1;transform:scale(1)}
+  .slide.always .rv,.slide.always .rvs{opacity:1;transform:none}
+  .slide.always{box-shadow:0 10px 26px rgba(18,56,99,.28);border:1px solid #e4e9ec}
 
   /* Headline system */
   .h-black{font-family:var(--font-head);font-weight:900;letter-spacing:-.5px;line-height:1.02;color:var(--ink)}
@@ -130,7 +136,7 @@
   .pcard{background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(18,56,99,.10);padding:30px 34px 26px;position:relative;border:1px solid #eef1f2}
   .pnum{position:absolute;left:26px;top:-22px;width:46px;height:46px;border-radius:50%;background:var(--orange);color:#fff;font-family:var(--font-head);font-weight:900;font-size:24px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 14px rgba(234,122,42,.4)}
   .pcard h3{font-family:var(--font-head);font-weight:900;color:var(--navy);font-size:27px;margin:8px 0 10px}
-  .pcard p{font-size:19px;line-height:1.4;color:var(--ink-mid)}
+  .pcard p{font-size:18px;line-height:1.4;color:var(--ink-mid);max-width:280px}
   .grid4-strap{position:absolute;left:0;right:0;bottom:86px;text-align:center;font-style:italic;font-weight:700;color:var(--navy);font-size:19px}
 
   /* pillar detail slides (6-9) */
@@ -304,6 +310,7 @@
 </head>
 <body>
 <div id="viewport">
+  <div id="stars"></div>
   <div id="world">
 
     <!-- ============ SLIDE 1 — COVER ============ -->
@@ -414,7 +421,7 @@
     </section>
 
     <!-- ============ SLIDE 6 — PILLAR 1 ============ -->
-    <section class="slide pillar hasapp" data-x="7500" data-y="780" data-s="0.34">
+    <section class="slide pillar hasapp always" data-x="7855" data-y="-71" data-s="0.16">
       <div class="pad">
         <div class="ptitle rv"><div class="pbadge">1</div><h2>Configurability</h2></div>
         <div class="peyebrow rv" style="--d:80">Validation that matches the contract.</div>
@@ -444,7 +451,7 @@
     </section>
 
     <!-- ============ SLIDE 7 — PILLAR 2 ============ -->
-    <section class="slide pillar hasapp" data-x="8500" data-y="780" data-s="0.34">
+    <section class="slide pillar hasapp always" data-x="8438" data-y="-71" data-s="0.16">
       <div class="pad">
         <div class="ptitle rv"><div class="pbadge">2</div><h2>UI ease</h2></div>
         <div class="peyebrow rv" style="--d:80">Crews actually use it.</div>
@@ -521,7 +528,7 @@
     </section>
 
     <!-- ============ SLIDE 8 — PILLAR 3 ============ -->
-    <section class="slide pillar hasapp" data-x="7500" data-y="1320" data-s="0.34">
+    <section class="slide pillar hasapp always" data-x="7855" data-y="168" data-s="0.16">
       <div class="pad">
         <div class="ptitle rv"><div class="pbadge">3</div><h2>Customer access</h2></div>
         <div class="peyebrow rv" style="--d:80">Customers see the work — in real time.</div>
@@ -551,7 +558,7 @@
     </section>
 
     <!-- ============ SLIDE 9 — PILLAR 4 ============ -->
-    <section class="slide pillar hasapp" data-x="8500" data-y="1320" data-s="0.34">
+    <section class="slide pillar hasapp always" data-x="8438" data-y="168" data-s="0.16">
       <div class="pad">
         <div class="ptitle rv"><div class="pbadge">4</div><h2>System integration</h2></div>
         <div class="peyebrow rv" style="--d:80">Flows into the stack you already run.</div>
@@ -734,6 +741,28 @@
     return {el:el,x:x,y:y,s:s,i:i};
   });
 
+  // journey line: teal arcing path through the top-level story stops, drawn under the slides
+  (function(){
+    var MAIN=[0,1,2,3,4,9,10,11,12].filter(function(i){return i<slides.length;});
+    var pts=MAIN.map(function(i){return slides[i];});
+    var minX=Math.min.apply(null,pts.map(function(s){return s.x;}))-800;
+    var maxX=Math.max.apply(null,pts.map(function(s){return s.x;}))+800;
+    var W=maxX-minX, TOP=-700, H=1400;
+    var svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svg.setAttribute('viewBox','0 0 '+W+' '+H);
+    svg.setAttribute('width',W); svg.setAttribute('height',H);
+    svg.style.cssText='position:absolute;left:'+minX+'px;top:'+TOP+'px;pointer-events:none';
+    var d='M '+(pts[0].x-minX)+' '+(0-TOP), dots='';
+    for(var i=1;i<pts.length;i++){
+      var x0=pts[i-1].x-minX, x1=pts[i].x-minX, mx=(x0+x1)/2;
+      d+=' Q '+mx+' '+(-150-TOP)+' '+x1+' '+(0-TOP);
+      dots+='<circle cx="'+mx+'" cy="'+(-75-TOP)+'" r="9" fill="#EA7A2A" opacity="0.9"/>';
+    }
+    svg.innerHTML='<path d="'+d+'" fill="none" stroke="#17A2A0" stroke-width="6" stroke-dasharray="20 16" opacity="0.42" stroke-linecap="round"/>'+dots;
+    world.insertBefore(svg, world.firstChild);
+  })();
+
+  var stars=document.getElementById('stars');
   var vw=window.innerWidth, vh=window.innerHeight;
   function fit(){ return Math.min(vw/BASE_W, vh/BASE_H); }
 
@@ -754,7 +783,17 @@
     var avgScreen=(from.k+target.k)/2;
     var screenTravel=travel*avgScreen;
     var dip=Math.min(0.55, screenTravel/(Math.max(vw,vh)*2.2)); // 0..0.55
-    tween={from:from, to:target, t0:now(), dur:dur||900, dip:dip};
+    // arc the flight along a quadratic bezier (upward bias to match the journey line)
+    var mx=(from.cx+target.cx)/2, my=(from.cy+target.cy)/2;
+    var dxx=target.cx-from.cx, dyy=target.cy-from.cy;
+    if(travel>1){
+      var nx=-dyy/travel, ny=dxx/travel;
+      if(ny>0){nx=-nx;ny=-ny;}
+      var amt=Math.min(travel*0.25,230);
+      mx+=nx*amt; my+=ny*amt;
+    }
+    tween={from:from, to:target, t0:now(), dur:dur||900, dip:dip, ctrl:{cx:mx,cy:my}};
+    world.style.willChange='transform';
     if(!rafOn){ rafOn=true; requestAnimationFrame(loop); }
   }
 
@@ -762,11 +801,12 @@
   function loop(){
     if(tween){
       var e=(now()-tween.t0)/tween.dur;
-      if(e>=1){ cam.cx=tween.to.cx; cam.cy=tween.to.cy; cam.k=tween.to.k; tween=null; }
+      if(e>=1){ cam.cx=tween.to.cx; cam.cy=tween.to.cy; cam.k=tween.to.k; tween=null; world.style.willChange='auto'; }
       else{
         var te=easeInOut(e);
-        cam.cx=tween.from.cx+(tween.to.cx-tween.from.cx)*te;
-        cam.cy=tween.from.cy+(tween.to.cy-tween.from.cy)*te;
+        var u=1-te;
+        cam.cx=u*u*tween.from.cx + 2*u*te*tween.ctrl.cx + te*te*tween.to.cx;
+        cam.cy=u*u*tween.from.cy + 2*u*te*tween.ctrl.cy + te*te*tween.to.cy;
         var kBase=tween.from.k+(tween.to.k-tween.from.k)*te;
         var bell=Math.sin(Math.PI*e);          // 0..1..0
         cam.k=kBase*(1-tween.dip*bell);
@@ -778,6 +818,7 @@
 
   function applyCam(){
     world.style.transform='translate('+(vw/2)+'px,'+(vh/2)+'px) scale('+cam.k+') translate('+(-cam.cx)+'px,'+(-cam.cy)+'px)';
+    stars.style.backgroundPosition=(-cam.cx*cam.k*0.10)+'px '+(-cam.cy*cam.k*0.10)+'px,'+(-cam.cx*cam.k*0.04)+'px '+(-cam.cy*cam.k*0.04)+'px';
   }
 
   // ---- Focus a slide ----
@@ -832,7 +873,7 @@
   function manual(){ tween=null; if(overview){ overview=false; document.body.classList.remove('overview'); } }
   var K_MIN, K_MAX;
   function clampK(k){ return Math.max(K_MIN, Math.min(K_MAX, k)); }
-  function recomputeLimits(){ K_MIN=fit()/ (slides.length*1.4); K_MAX=fit()/slides[0].s*7; }
+  function recomputeLimits(){ K_MIN=fit()/ (slides.length*1.4); K_MAX=fit()/slides[0].s*10; }
 
   function zoomAt(px,py,factor){
     manual();
